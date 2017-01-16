@@ -19,7 +19,8 @@ loader
 function init(){
 	stageSet();
 	particleLoad();
-	renderer.render(stage);
+	bindKeys();
+	renderLoop();
 }
 
 //Road boundaries
@@ -45,6 +46,7 @@ function stageSet() {
 	
 }
 
+//Particle Init
 var particle;
 
 function particleLoad(){
@@ -58,4 +60,67 @@ function particleLoad(){
 	particle.speed = 0;
 	particle.rotation = 0;
 	stage.addChild(particle);
+}
+
+//Game Play
+
+//Keyboard functionality
+function keyboard(keyCode) {
+  var key = {};
+  key.code = keyCode;
+  key.isDown = false;
+  key.isUp = true;
+  key.press = undefined;
+  key.release = undefined;
+  //The `downHandler`
+  key.downHandler = function(event) {
+    if (event.keyCode === key.code) {
+      if (key.isUp && key.press) key.press();
+      key.isDown = true;
+      key.isUp = false;
+    }
+    event.preventDefault();
+  };
+
+  //The `upHandler`
+  key.upHandler = function(event) {
+    if (event.keyCode === key.code) {
+      if (key.isDown && key.release) key.release();
+      key.isDown = false;
+      key.isUp = true;
+    }
+    event.preventDefault();
+  };
+
+  //Attach event listeners
+  window.addEventListener(
+    "keydown", key.downHandler.bind(key), false
+  );
+  window.addEventListener(
+    "keyup", key.upHandler.bind(key), false
+  );
+  return key;
+}
+
+var up, down, right, left;
+function bindKeys(){
+	up = keyboard(38);
+	down = keyboard(40);
+	right = keyboard(39);
+	left = keyboard(37);
+}
+
+function renderLoop(){
+	requestAnimationFrame(renderLoop);
+	particleState();
+	renderer.render(stage);
+}
+
+function particleState(){
+	if(right.isDown){
+		particle.rotation += 0.1;
+	}
+	if(left.isDown){
+		particle.rotation -= 0.1;
+	}
 }
