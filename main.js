@@ -15,7 +15,8 @@ document.body.appendChild(renderer.view);
 //Road boundaries
 var lpoints = [
 	[ 310, 0, 310, 720],
-	[ 410, 0, 410, 720]
+	[ 410, 0, 410, 720],
+	[ 0, 0, 310, 720]
 ];
 
 var lines = [];
@@ -158,6 +159,10 @@ function colCheck(){
 			if(pintersectionX(particle, lpoints[i])){
 				return true;
 			}
+		}else{
+			if(pintersectionY(particle, lpoints[i])){
+				return true;
+			}
 		}
 	}
 	return false;
@@ -171,5 +176,14 @@ function pintersectionX(part, line){
 }
 
 function pintersectionY(part, line){
-
+	var a = part.x;
+	var c = part.y;
+	var r = part.width/2;
+	var m = (line[2] - line[0])/(line[3] - line[1]);
+	var b = line[1] - m*line[0];
+	if(Math.pow(r,2)*Math.pow(m,2) + 2*c*a*m - Math.pow(c,2)*Math.pow(m,2) - 2*b*c*m + Math.pow(r,2) +2*b*a - Math.pow(b,2) - Math.pow(a,2) >= 0){
+		return true;
+	}else{
+		return false;
+	}
 }
