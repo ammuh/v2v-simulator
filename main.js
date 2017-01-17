@@ -3,25 +3,14 @@
 var Container = PIXI.Container,
     autoDetectRenderer = PIXI.autoDetectRenderer,
     loader = PIXI.loader,
+    Text = PIXI.Text,
     resources = PIXI.loader.resources,
-    Sprite = PIXI.Sprite;
+    Sprite = PIXI.Sprite,
     Graphics = PIXI.Graphics;
 
 var renderer = autoDetectRenderer(720, 720, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
-
-loader
-	.add("img/p.png")
-	.load(init);
-
-
-function init(){
-	stageSet();
-	particleLoad();
-	bindKeys();
-	renderLoop();
-}
 
 //Road boundaries
 var lpoints = [
@@ -31,11 +20,26 @@ var lpoints = [
 
 var lines = [];
 
+var label;
+
+loader
+	.add("img/p.png")
+	.load(init);
+
+
+
+
+
+
 function stageSet() {
+	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
+	stage.addChild(msg);
+	label = stage.children[0];
+
 	var i;
 	for(i = 0; i < lpoints.length; i++){
 		var ln = new Graphics();
-		ln.lineStyle(20, 0xFFFFFF, 1);
+		ln.lineStyle(4, 0xFFFFFF, 1);
 		ln.moveTo(lpoints[i][0], lpoints[i][1]);
 		ln.lineTo(lpoints[i][2], lpoints[i][3]);
 		lines.push(ln);
@@ -43,7 +47,13 @@ function stageSet() {
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
 	}	
-	
+}
+
+function init(){
+	stageSet();
+	particleLoad();
+	bindKeys();
+	renderLoop();
 }
 
 //Particle Init
@@ -113,6 +123,11 @@ function bindKeys(){
 function renderLoop(){
 	requestAnimationFrame(renderLoop);
 	particleState();
+	if(colCheck()){
+		label.text = "OUCH!";
+	}else {
+		label.text = "Smooth Sailing!";
+	}
 	renderer.render(stage);
 }
 
@@ -133,4 +148,28 @@ function particleState(){
 	}
 	particle.x += particle.speed*Math.cos(Math.PI/2 - particle.rotation);
   	particle.y -= particle.speed*Math.sin(Math.PI/2 - particle.rotation);
+}
+
+//Collision
+function colCheck(){
+	var i;
+	for(i = 0; i < lpoints.length; i++){
+		if(lpoints[i][0] - lpoints[i][2] == 0){
+			if(pintersectionX(particle, lpoints[i])){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function pintersectionX(part, line){
+	if(line[0] < part.x + part.width/2 && line[0] > part.x - part.width/2){
+		return true;
+	}
+	return false;
+}
+
+function pintersectionY(part, line){
+
 }
