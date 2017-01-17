@@ -1,5 +1,4 @@
 //Aliases
-
 var Container = PIXI.Container,
     autoDetectRenderer = PIXI.autoDetectRenderer,
     loader = PIXI.loader,
@@ -8,17 +7,19 @@ var Container = PIXI.Container,
     Sprite = PIXI.Sprite,
     Graphics = PIXI.Graphics;
 
+//Creates window in browser 720 by 720
 var renderer = autoDetectRenderer(720, 720, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
 
-//Road boundaries
+//These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
 var lpoints = [
 	[ 310, 0, 310, 720],
 	[ 410, 0, 410, 720],
 	[ 0, 0, 310, 720]
 ];
 
+//This is a global array that stores all the lines
 var lines = [];
 
 var label;
@@ -27,11 +28,7 @@ loader
 	.add("img/p.png")
 	.load(init);
 
-
-
-
-
-
+//Adds all the lines, and the collision label
 function stageSet() {
 	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
 	stage.addChild(msg);
@@ -60,6 +57,7 @@ function init(){
 //Particle Init
 var particle;
 
+//Initializes all the variables for the particle
 function particleLoad(){
 	particle = new Sprite(resources["img/p.png"].texture);
 	particle.height = 50;
@@ -75,7 +73,7 @@ function particleLoad(){
 
 //Game Play
 
-//Keyboard functionality
+//Keyboard functionality (I just copied this method from somewhere)
 function keyboard(keyCode) {
   var key = {};
   key.code = keyCode;
@@ -113,6 +111,7 @@ function keyboard(keyCode) {
   return key;
 }
 
+//This is used to bind controlls to t
 var up, down, right, left;
 function bindKeys(){
 	up = keyboard(38);
@@ -121,6 +120,7 @@ function bindKeys(){
 	left = keyboard(37);
 }
 
+// This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 function renderLoop(){
 	requestAnimationFrame(renderLoop);
 	particleState();
@@ -132,6 +132,7 @@ function renderLoop(){
 	renderer.render(stage);
 }
 
+//This function handles the position and behaviour of the particle
 function particleState(){
 	if(right.isDown){
 		particle.rotation += 0.1;
@@ -147,11 +148,13 @@ function particleState(){
 	}else if(down.isDown && particle.speed - .5 < 0){
 		particle.speed = 0;
 	}
+
+	//Current speed is added to the position of the particle, think velocity equation...
 	particle.x += particle.speed*Math.cos(Math.PI/2 - particle.rotation);
   	particle.y -= particle.speed*Math.sin(Math.PI/2 - particle.rotation);
 }
 
-//Collision
+//Collision check for all lines stored in the lines array
 function colCheck(){
 	var i;
 	for(i = 0; i < lpoints.length; i++){
@@ -168,6 +171,7 @@ function colCheck(){
 	return false;
 }
 
+//Function for detecting intersection if the line is vertical
 function pintersectionX(part, line){
 	if(line[0] < part.x + part.width/2 && line[0] > part.x - part.width/2){
 		return true;
@@ -175,6 +179,7 @@ function pintersectionX(part, line){
 	return false;
 }
 
+//Function for detecting if there is an intersection between a given line and the particle
 function pintersectionY(part, line){
 	var a = part.x;
 	var c = part.y;
