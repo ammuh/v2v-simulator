@@ -123,4 +123,14 @@ function particleState(){
 	if(left.isDown){
 		particle.rotation -= 0.1;
 	}
+	if(up.isDown && particle.speed < 4){
+		particle.speed += .4;
+	}
+	if(down.isDown && particle.speed - .5 >= 0){
+		particle.speed -= .5;
+	}else if(down.isDown && particle.speed - .5 < 0){
+		particle.speed = 0;
+	}
+	particle.x += particle.speed*Math.cos(Math.PI/2 - particle.rotation);
+  	particle.y -= particle.speed*Math.sin(Math.PI/2 - particle.rotation);
 }
