@@ -159,8 +159,12 @@ function colCheck(){
 			if(pintersectionX(particle, lpoints[i])){
 				return 1;
 			}
-		}else{
+		}else if(lpoints[i][1] - lpoints[i][3] == 0){
 			if(pintersectionY(particle, lpoints[i])){
+				return 1;
+			}
+		}else{
+			if(pintersectionF(particle, lpoints[i])){
 				return 1;
 			}
 		}
@@ -170,14 +174,21 @@ function colCheck(){
 
 //Function for detecting intersection if the line is vertical
 function pintersectionX(part, line){
-	if(line[0] < part.x + part.width/2 && line[0] > part.x - part.width/2 && boverlap(line[1], line[3], part.y - part.width/2, part.y + part.width/2)){
+	if(boverlap(part.x - part.width/2, part.x + part.width/2,line[0], line[0]) && boverlap(line[1], line[3], part.y - part.width/2, part.y + part.width/2)){
+		return true;
+	}
+	return false;
+}
+
+function pintersectionY(part, line){
+	if(boverlap(part.y - part.width/2, part.y + part.width/2,line[1], line[1]) && boverlap(line[0], line[2], part.x - part.width/2, part.x + part.width/2)){
 		return true;
 	}
 	return false;
 }
 
 //Function for detecting if there is an intersection between a given line and the particle
-function pintersectionY(part, line){
+function pintersectionF(part, line){
 	if(!boverlap(line[0],line[2],part.x - part.width/2, part.x + part.width/2) || !boverlap(line[1],line[3],part.y - part.width/2, part.y + part.width/2)){
 		return false;
 	}
