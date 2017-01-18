@@ -13,11 +13,7 @@ var stage = new Container();
 document.body.appendChild(renderer.view);
 
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
-var lpoints = [
-	[ 310, 0, 310, 720],
-	[ 410, 0, 410, 720],
-	[ 0, 0, 310, 720]
-];
+var lpoints = stagedata;
 
 //This is a global array that stores all the lines
 var lines = [];
