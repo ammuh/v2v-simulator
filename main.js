@@ -151,25 +151,26 @@ function particleState(){
 }
 
 //Collision check for all lines stored in the lines array
+
 function colCheck(){
 	var i;
 	for(i = 0; i < lpoints.length; i++){
 		if(lpoints[i][0] - lpoints[i][2] == 0){
 			if(pintersectionX(particle, lpoints[i])){
-				return true;
+				return 1;
 			}
 		}else{
 			if(pintersectionY(particle, lpoints[i])){
-				return true;
+				return 1;
 			}
 		}
 	}
-	return false;
+	return 0;
 }
 
 //Function for detecting intersection if the line is vertical
 function pintersectionX(part, line){
-	if(line[0] < part.x + part.width/2 && line[0] > part.x - part.width/2){
+	if(line[0] < part.x + part.width/2 && line[0] > part.x - part.width/2 && boverlap(line[1], line[3], part.y - part.width/2, part.y + part.width/2)){
 		return true;
 	}
 	return false;
@@ -177,6 +178,9 @@ function pintersectionX(part, line){
 
 //Function for detecting if there is an intersection between a given line and the particle
 function pintersectionY(part, line){
+	if(!boverlap(line[0],line[2],part.x - part.width/2, part.x + part.width/2) || !boverlap(line[1],line[3],part.y - part.width/2, part.y + part.width/2)){
+		return false;
+	}
 	var a = part.x;
 	var c = part.y;
 	var r = part.width/2;
@@ -187,4 +191,11 @@ function pintersectionY(part, line){
 	}else{
 		return false;
 	}
+}
+
+function boverlap(a1, a2, a3, a4){
+	if((a3 <= Math.max(a1,a2) && a3 >= Math.min(a1,a2)) || (a4 <= Math.max(a1,a2) && a4 >= Math.min(a1,a2))){
+		return true;
+	}
+	return false;
 }
