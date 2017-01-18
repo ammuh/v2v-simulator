@@ -8,7 +8,7 @@ var Container = PIXI.Container,
     Graphics = PIXI.Graphics;
 
 //Creates window in browser 720 by 720
-var renderer = autoDetectRenderer(720, 720, {resolution: 1});
+var renderer = autoDetectRenderer(720, 760, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
 
@@ -29,6 +29,32 @@ function stageSet() {
 	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
 	stage.addChild(msg);
 	label = stage.children[0];
+	label.y = 740;
+
+	var top = new Graphics(),
+		bottom = new Graphics(),
+		rside = new Graphics(),
+		lside = new Graphics();
+
+	top.lineStyle(2, 0x00FF00, 1);
+	bottom.lineStyle(2, 0x00FF00, 1);
+	rside.lineStyle(4, 0x00FF00, 1);
+	lside.lineStyle(4, 0x00FF00, 1);
+
+	top.moveTo(0, 0);
+	bottom.moveTo(0, 720);
+	rside.moveTo(720, 0);
+	lside.moveTo(0, 0);
+
+	top.lineTo(720, 0);
+	bottom.lineTo(720, 720);
+	rside.lineTo(720, 720);
+	lside.lineTo(0, 720);
+
+	lines.push(top);
+	lines.push(bottom);
+	lines.push(rside);
+	lines.push(lside);
 
 	var i;
 	for(i = 0; i < lpoints.length; i++){
@@ -38,6 +64,12 @@ function stageSet() {
 		ln.lineTo(lpoints[i][2], lpoints[i][3]);
 		lines.push(ln);
 	}
+
+	stagedata.push([0,0, 720, 0]);
+	stagedata.push([0,0, 0, 720]);
+	stagedata.push([720, 0, 720, 720]);
+	stagedata.push([0, 720, 720, 720]);
+
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
 	}	
