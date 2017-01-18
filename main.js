@@ -88,14 +88,21 @@ var particle;
 //Initializes all the variables for the particle
 function particleLoad(){
 	particle = new Sprite(resources["img/p.png"].texture);
+	//Circle Diameter
 	particle.height = 50;
 	particle.width = 50;
-	particle.x = 360;
-	particle.y = 720;
+	//Starting position
+	particle.x = 720 - particle.width - 5;
+	particle.y = 720 - particle.width - 5;
+	//Reference point for center
 	particle.anchor.x = .5;
 	particle.anchor.y = .5;
+	//Important Driving Variables
 	particle.speed = 0;
 	particle.rotation = 0;
+	//Particle States
+	particle.accel = 0;
+	particle.steer = 0;
 	stage.addChild(particle);
 }
 
@@ -147,10 +154,31 @@ function bindKeys(){
 	right = keyboard(39);
 	left = keyboard(37);
 }
+function keyState(){
+	if(up.isDown){
+		particle.accel = 1;
+	}
+	if(down.isDown){
+		particle.accel = -1;
+	}
+	if(!down.isDown && !up.isDown){
+		particle.accel = 0;
+	}
+	if(right.isDown){
+		particle.steer = 1;
+	}
+	if(left.isDown){
+		particle.steer = -1;
+	}
+	if(!right.isDown && !left.isDown){
+		particle.steer = 0;
+	}
+}
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 function renderLoop(){
 	requestAnimationFrame(renderLoop);
+	keyState();
 	particleState();
 	if(colCheck()){
 		label.text = "OUCH!";
@@ -162,18 +190,18 @@ function renderLoop(){
 
 //This function handles the position and behaviour of the particle
 function particleState(){
-	if(right.isDown){
-		particle.rotation += 0.1;
+	if(particle.steer > 0){
+		steer(.1);
 	}
-	if(left.isDown){
-		particle.rotation -= 0.1;
+	if(particle.steer < 0){
+		steer(-.1);
 	}
-	if(up.isDown && particle.speed < 4){
-		particle.speed += .4;
+	if(particle.accel > 0 && particle.speed < 4){
+		accelerate(.4);
 	}
-	if(down.isDown && particle.speed - .5 >= 0){
-		particle.speed -= .5;
-	}else if(down.isDown && particle.speed - .5 < 0){
+	if(particle.accel < 0 && particle.speed - .5 >= 0){
+		accelerate(-.5);
+	}else if(particle.accel < 0 && particle.speed - .5 < 0){
 		particle.speed = 0;
 	}
 
@@ -182,6 +210,13 @@ function particleState(){
   	particle.y -= particle.speed*Math.sin(Math.PI/2 - particle.rotation);
 }
 
+//Particle Functions
+function steer(rad){
+	particle.rotation += rad;
+}
+function accelerate(v){
+	particle.speed += v;
+}
 //Collision check for all lines stored in the lines array
 
 function colCheck(){
