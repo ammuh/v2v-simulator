@@ -44,12 +44,11 @@ function stageSet() {
 	}
 
   for (var i = 0; i < gNodes.length; i++) {
-    console.log(gNodes[i][0], gNodes[i][1]);
     var gfx = new Graphics();
-    gfx.beginFill(0x2ecc71);
-    gfx.drawCircle(gNodes[i][0], gNodes[i][1], 10);
-    gfx.endFill();
-    stage.addChild(gfx)
+		ln.lineStyle(1, 0x2ecc71, 1);
+		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
+		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
+    stage.addChild(ln)
   }
 
 	for(i = 0; i < lines.length; i++){
