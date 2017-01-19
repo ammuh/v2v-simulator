@@ -31,8 +31,8 @@ loader
 function stageSet() {
 	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
 	stage.addChild(msg);
-	label = stage.children[0];
-	label.y = 740;
+	label = stage.children[0]
+;	label.y = 740;
 
 	var i;
 	for(i = 0; i < lpoints.length; i++){
@@ -60,10 +60,6 @@ function init(){
 	stageSet();
 	particleLoad();
 	workerInit();
-	driver.postMessage("Hello Worker! :)");
-	bindKeys();
-	//var worker = new Worker("driver.js");
-	//worker.start();
 	renderLoop();
 }
 
@@ -77,8 +73,8 @@ function particleLoad(){
 	particle.height = 50;
 	particle.width = 50;
 	//Starting position
-	particle.x = 720 - particle.width - 5;
-	particle.y = 720 - particle.width - 5;
+	particle.x = 300;
+	particle.y = 300;
 	//Reference point for center
 	particle.anchor.x = .5;
 	particle.anchor.y = .5;
@@ -97,10 +93,22 @@ function particleLoad(){
 var driver;
 function workerInit(){
 	driver = new Worker("driver.js");
-	driver.onmessage = function(e) {
-		result.textContent = e.data;
-		console.log('Message received from worker');
+	driver.onmessage = function(pstate) {
+		particle.accel = pstate.data.accel;
+		particle.steer = pstate.data.steer;
 	};
+
+	driver.postMessage({header:"stage", stage: lpoints});
+}
+
+function driverState(){
+	driver.postMessage({
+		header:"partdata",
+		x: particle.x,
+		y: particle.y,
+		rad: particle.rotation,
+		speed: particle.speed
+	});
 }
 
 
@@ -143,7 +151,7 @@ function keyboard(keyCode) {
 }
 
 //This is used to bind controlls to t
-var up, down, right, left;
+/*var up, down, right, left;
 function bindKeys(){
 	up = keyboard(38);
 	down = keyboard(40);
@@ -169,12 +177,12 @@ function keyState(){
 	if(!right.isDown && !left.isDown){
 		particle.steer = 0;
 	}
-}
+}*/
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 function renderLoop(){
 	requestAnimationFrame(renderLoop);
-	keyState();
+	driverState();
 	particleState();
 	if(colCheck()){
 		label.text = "OUCH!";
