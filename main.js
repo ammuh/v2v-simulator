@@ -13,7 +13,10 @@ var stage = new Container();
 document.body.appendChild(renderer.view);
 
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
-var lpoints = stagedata;
+var lpoints = stageData;
+
+// These are the graph nodes
+var gNodes = graphNodes;
 
 //This is a global array that stores all the lines
 var lines = [];
@@ -31,31 +34,6 @@ function stageSet() {
 	label = stage.children[0];
 	label.y = 740;
 
-	var top = new Graphics(),
-		bottom = new Graphics(),
-		rside = new Graphics(),
-		lside = new Graphics();
-
-	top.lineStyle(2, 0x00FF00, 1);
-	bottom.lineStyle(2, 0x00FF00, 1);
-	rside.lineStyle(4, 0x00FF00, 1);
-	lside.lineStyle(4, 0x00FF00, 1);
-
-	top.moveTo(0, 0);
-	bottom.moveTo(0, 720);
-	rside.moveTo(720, 0);
-	lside.moveTo(0, 0);
-
-	top.lineTo(720, 0);
-	bottom.lineTo(720, 720);
-	rside.lineTo(720, 720);
-	lside.lineTo(0, 720);
-
-	lines.push(top);
-	lines.push(bottom);
-	lines.push(rside);
-	lines.push(lside);
-
 	var i;
 	for(i = 0; i < lpoints.length; i++){
 		var ln = new Graphics();
@@ -65,14 +43,17 @@ function stageSet() {
 		lines.push(ln);
 	}
 
-	stagedata.push([0,0, 720, 0]);
-	stagedata.push([0,0, 0, 720]);
-	stagedata.push([720, 0, 720, 720]);
-	stagedata.push([0, 720, 720, 720]);
+  for (var i = 0; i < gNodes.length; i++) {
+    var gfx = new Graphics();
+    gfx.beginFill("green");
+    gfx.drawCircle(gNodes[i][0], gNodes[i][1], 3);
+    gfx.endFill();
+    stage.addChild(gfx)
+  }
 
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
-	}	
+	}
 }
 
 function init(){
