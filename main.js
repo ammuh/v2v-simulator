@@ -93,8 +93,8 @@ function particleLoad(){
 	particle.height = 50;
 	particle.width = 50;
 	//Starting position
-	particle.x = 720 - particle.width - 5;
-	particle.y = 720 - particle.width - 5;
+	particle.x = 300;
+	particle.y = 300;
 	//Reference point for center
 	particle.anchor.x = .5;
 	particle.anchor.y = .5;
@@ -114,9 +114,14 @@ var driver;
 function workerInit(){
 	driver = new Worker("driver.js");
 	driver.onmessage = function(pstate) {
-		particle.accel = pstate.accel;
-		particle.steer = pstate.steer;
+		console.log(pstate);
+		particle.accel = pstate.data.accel;
+		particle.steer = pstate.data.steer;
 	};
+}
+
+function driverState(){
+	driver.postMessage({});
 }
 
 
@@ -190,7 +195,8 @@ function keyState(){
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 function renderLoop(){
 	requestAnimationFrame(renderLoop);
-	keyState();
+	//keyState();
+	driverState();
 	particleState();
 	if(colCheck()){
 		label.text = "OUCH!";
