@@ -31,8 +31,8 @@ loader
 function stageSet() {
 	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
 	stage.addChild(msg);
-	label = stage.children[0]
-;	label.y = 740;
+	label = stage.children[0];
+	label.y = 740;
 
 	var i;
 	for(i = 0; i < lpoints.length; i++){
@@ -63,6 +63,11 @@ function init(){
 	renderLoop();
 }
 
+//Message Board
+
+function messageUpdate(col){
+	label.setText("  accel: " + particle.accel + " steer: " + particle.steer + " speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100) + " rotation: " + (Math.floor(particle.rotation) + Math.floor(100*(particle.rotation - Math.floor(particle.rotation)))/100) + " collision: " + col);
+}
 //Particle Init
 var particle;
 
@@ -184,11 +189,7 @@ function renderLoop(){
 	requestAnimationFrame(renderLoop);
 	driverState();
 	particleState();
-	if(colCheck()){
-		label.text = "OUCH!";
-	}else {
-		label.text = "Smooth Sailing!";
-	}
+	messageUpdate(colCheck());
 	renderer.render(stage);
 }
 
@@ -217,6 +218,9 @@ function particleState(){
 //Particle Functions
 function steer(rad){
 	particle.rotation += rad;
+	if(particle.rotation > 2*Math.PI){
+		particle.rotation -= 2*Math.PI;
+	}
 }
 function accelerate(v){
 	particle.speed += v;
