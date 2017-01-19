@@ -28,8 +28,8 @@ loader
 function stageSet() {
 	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
 	stage.addChild(msg);
-	label = stage.children[0];
-	label.y = 740;
+	label = stage.children[0]
+;	label.y = 740;
 
 	var top = new Graphics(),
 		bottom = new Graphics(),
@@ -79,7 +79,6 @@ function init(){
 	stageSet();
 	particleLoad();
 	workerInit();
-	bindKeys();
 	renderLoop();
 }
 
@@ -114,14 +113,21 @@ var driver;
 function workerInit(){
 	driver = new Worker("driver.js");
 	driver.onmessage = function(pstate) {
-		console.log(pstate);
 		particle.accel = pstate.data.accel;
 		particle.steer = pstate.data.steer;
 	};
+
+	driver.postMessage({header:"stage", stage: lpoints});
 }
 
 function driverState(){
-	driver.postMessage({});
+	driver.postMessage({
+		header:"partdata",
+		x: particle.x,
+		y: particle.y,
+		rad: particle.rotation,
+		speed: particle.speed
+	});
 }
 
 
@@ -164,7 +170,7 @@ function keyboard(keyCode) {
 }
 
 //This is used to bind controlls to t
-var up, down, right, left;
+/*var up, down, right, left;
 function bindKeys(){
 	up = keyboard(38);
 	down = keyboard(40);
@@ -190,12 +196,11 @@ function keyState(){
 	if(!right.isDown && !left.isDown){
 		particle.steer = 0;
 	}
-}
+}*/
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 function renderLoop(){
 	requestAnimationFrame(renderLoop);
-	//keyState();
 	driverState();
 	particleState();
 	if(colCheck()){
