@@ -8,7 +8,7 @@ var Container = PIXI.Container,
     Graphics = PIXI.Graphics;
 
 //Creates window in browser 720 by 720
-var renderer = autoDetectRenderer(720, 760, {resolution: 1});
+var renderer = autoDetectRenderer(720, 745, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
 
@@ -32,7 +32,7 @@ function stageSet() {
 	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
 	stage.addChild(msg);
 	label = stage.children[0];
-	label.y = 740;
+	label.y = 725;
 
 	var i;
 	for(i = 0; i < lpoints.length; i++){
@@ -64,9 +64,10 @@ function init(){
 }
 
 //Message Board
-
+var fps = 0;
 function messageUpdate(col){
-	label.setText("  accel: " + particle.accel + " steer: " + particle.steer + " speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100) + " rotation: " + (Math.floor(particle.rotation) + Math.floor(100*(particle.rotation - Math.floor(particle.rotation)))/100) + " collision: " + col);
+	label.setText("  FPS: "+ fps +", accel: " + particle.accel + ", steer: " + particle.steer + ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100) + ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6)) + " \u00B7	\u03C0/6, collision: " + col);
+	return;
 }
 //Particle Init
 var particle;
@@ -89,6 +90,15 @@ function particleLoad(){
 	//Particle States
 	particle.accel = 0;
 	particle.steer = 0;
+	//Routing
+	particle.route = [];
+	var i;
+	for(i = 0; i < graphNodes.length; i++){
+		particle.route.push({traveled: 0, point:graphNodes[i][0]});
+		if(graphNodes.length - 1 == i){
+			particle.route.push({traveled: 0, point:graphNodes[i][1]});
+		}
+	}
 	stage.addChild(particle);
 }
 
@@ -185,10 +195,14 @@ function keyState(){
 }*/
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
+var then = new Date;
 function renderLoop(){
+	var now = new Date;
 	requestAnimationFrame(renderLoop);
 	driverState();
 	particleState();
+	fps = 8*Math.floor((1000 / (now - then))/8);
+	then = now;
 	messageUpdate(colCheck());
 	renderer.render(stage);
 }
@@ -218,12 +232,32 @@ function particleState(){
 //Particle Functions
 function steer(rad){
 	particle.rotation += rad;
-	if(particle.rotation > 2*Math.PI){
-		particle.rotation -= 2*Math.PI;
-	}
+	particle.rotation %= 2*Math.PI;
 }
 function accelerate(v){
 	particle.speed += v;
+}
+
+function gps(){
+	var i = 0;
+	while(particle.route[i].traveled == 0){
+		i++;
+		if(i >= particle.route.length){
+			return null;
+		}
+	}
+	var point = particle.route[i].traveled;
+	var hyp = Math.sqrt(Math.pow(particle.x - point[0], 2) + Math.pow(particle.y - point[1], 2));
+	if(hyp < 4){
+		return {dist: 0, rot: 0};
+	}
+	var adj = point[0] - particle.x;
+	var rad = Math.acos(adj/hyp);
+	if(point[1] > particle.y){
+		return {dist : hyp, rot: particle.rotation}
+	}else{
+
+	}
 }
 //Collision check for all lines stored in the lines array
 
