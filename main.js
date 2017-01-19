@@ -46,7 +46,7 @@ function stageSet() {
   for (var i = 0; i < gNodes.length; i++) {
     console.log(gNodes[i][0], gNodes[i][1]);
     var gfx = new Graphics();
-    gfx.beginFill("green");
+    gfx.beginFill(0x2ecc71);
     gfx.drawCircle(gNodes[i][0], gNodes[i][1], 10);
     gfx.endFill();
     stage.addChild(gfx)
