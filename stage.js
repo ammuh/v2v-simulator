@@ -9,5 +9,7 @@ var stageData = [
 
 
 var graphNodes = [
-	[50, 670]
+	[50, 670],
+	[700, 670],
+	[50, 20]
 ]
