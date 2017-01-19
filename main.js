@@ -78,7 +78,11 @@ function stageSet() {
 function init(){
 	stageSet();
 	particleLoad();
+	workerInit();
+	driver.postMessage("Hello Worker! :)");
 	bindKeys();
+	//var worker = new Worker("driver.js");
+	//worker.start();
 	renderLoop();
 }
 
@@ -107,6 +111,17 @@ function particleLoad(){
 }
 
 //Game Play
+
+//Worker Thread
+var driver;
+function workerInit(){
+	driver = new Worker("driver.js");
+	driver.onmessage = function(e) {
+		result.textContent = e.data;
+		console.log('Message received from worker');
+	};
+}
+
 
 //Keyboard functionality (I just copied this method from somewhere)
 function keyboard(keyCode) {
