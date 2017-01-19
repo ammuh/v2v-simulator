@@ -79,10 +79,7 @@ function init(){
 	stageSet();
 	particleLoad();
 	workerInit();
-	driver.postMessage("Hello Worker! :)");
 	bindKeys();
-	//var worker = new Worker("driver.js");
-	//worker.start();
 	renderLoop();
 }
 
@@ -116,9 +113,9 @@ function particleLoad(){
 var driver;
 function workerInit(){
 	driver = new Worker("driver.js");
-	driver.onmessage = function(e) {
-		result.textContent = e.data;
-		console.log('Message received from worker');
+	driver.onmessage = function(pstate) {
+		particle.accel = pstate.accel;
+		particle.steer = pstate.steer;
 	};
 }
 
