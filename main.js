@@ -24,7 +24,6 @@ var lines = [];
 var label;
 
 loader
-	.add("img/p.png")
 	.load(init);
 
 //Adds all the lines, and the collision label
@@ -58,8 +57,8 @@ function stageSet() {
 
 function init(){
 	stageSet();
-	particleLoad();
-	workerInit();
+	particle = Particle(300, 300);
+	stage.addChild(particle);
 	renderLoop();
 }
 
@@ -71,7 +70,7 @@ function messageUpdate(){
 	str += ", steer: " + particle.steer;
 	str += ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100);
 	str += ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6));
-	str += " \u00B7	\u03C0/6, collision: " + colCheck();
+	str += " \u00B7	\u03C0/6, collision: " + particle.collisionCheck(stageData);
 	if(gps()){
 		str += ", distanceToPoint: " + Math.floor(gps().dist);
 		str += ", rad: " + gps().rot;
@@ -81,60 +80,11 @@ function messageUpdate(){
 //Particle Init
 var particle;
 
-//Initializes all the variables for the particle
-function particleLoad(){
-	particle = new Sprite(resources["img/p.png"].texture);
-	//Circle Diameter
-	particle.height = 50;
-	particle.width = 50;
-	//Starting position
-	particle.x = 300;
-	particle.y = 300;
-	//Reference point for center
-	particle.anchor.x = .5;
-	particle.anchor.y = .5;
-	//Important Driving Variables
-	particle.speed = 0;
-	particle.rotation = 0;
-	//Particle States
-	particle.accel = 0;
-	particle.steer = 0;
-	//Routing
-	particle.route = [];
-	var i;
-	for(i = 0; i < graphNodes.length; i++){
-		particle.route.push({traveled: 0, point:graphNodes[i][0]});
-		if(graphNodes.length - 1 == i){
-			particle.route.push({traveled: 0, point:graphNodes[i][1]});
-		}
-	}
-	stage.addChild(particle);
-}
 
 //Game Play
 
-//Worker Thread
-var driver;
-function workerInit(){
-	driver = new Worker("driver.js");
-	driver.onmessage = function(pstate) {
-		particle.accel = pstate.data.accel;
-		particle.steer = pstate.data.steer;
-	};
 
-	driver.postMessage({header:"stage", stage: lpoints});
-}
 
-function driverState(){
-	driver.postMessage({
-		header:"partdata",
-		x: particle.x,
-		y: particle.y,
-		rad: particle.rotation,
-		speed: particle.speed,
-		gps: gps()
-	});
-}
 
 
 //Keyboard functionality (I just copied this method from somewhere)
@@ -209,8 +159,8 @@ var then = new Date;
 function renderLoop(){
 	var now = new Date;
 	requestAnimationFrame(renderLoop);
-	driverState();
-	particleState();
+	particle.driverState();
+	particle.state();
 	fps = 8*Math.floor((1000 / (now - then))/8);
 	then = now;
 	messageUpdate();
@@ -218,35 +168,8 @@ function renderLoop(){
 }
 
 //This function handles the position and behaviour of the particle
-function particleState(){
-	if(particle.steer > 0){
-		steer(.1);
-	}
-	if(particle.steer < 0){
-		steer(-.1);
-	}
-	if(particle.accel > 0 && particle.speed < 3){
-		accelerate(.4);
-	}
-	if(particle.accel < 0 && particle.speed - 1 >= 0){
-		accelerate(-1);
-	}else if(particle.accel < 0 && particle.speed - 1 < 0){
-		particle.speed = 0;
-	}
 
-	//Current speed is added to the position of the particle, think velocity equation...
-	particle.x += particle.speed*Math.cos(Math.PI/2 - particle.rotation);
-  	particle.y -= particle.speed*Math.sin(Math.PI/2 - particle.rotation);
-}
 
-//Particle Functions
-function steer(rad){
-	particle.rotation += rad;
-	particle.rotation %= 2*Math.PI;
-}
-function accelerate(v){
-	particle.speed += v;
-}
 
 function gps(){
 	var i = 0;
@@ -270,64 +193,4 @@ function gps(){
 	}else{
 		return {dist : hyp, rot: Math.PI/2-rad - particle.rotation};
 	}
-}
-//Collision check for all lines stored in the lines array
-
-function colCheck(){
-	var i;
-	for(i = 0; i < lpoints.length; i++){
-		if(lpoints[i][0] - lpoints[i][2] == 0){
-			if(pintersectionX(particle, lpoints[i])){
-				return 1;
-			}
-		}else if(lpoints[i][1] - lpoints[i][3] == 0){
-			if(pintersectionY(particle, lpoints[i])){
-				return 1;
-			}
-		}else{
-			if(pintersectionF(particle, lpoints[i])){
-				return 1;
-			}
-		}
-	}
-	return 0;
-}
-
-//Function for detecting intersection if the line is vertical
-function pintersectionX(part, line){
-	if(boverlap(part.x - part.width/2, part.x + part.width/2,line[0], line[0]) && boverlap(line[1], line[3], part.y - part.width/2, part.y + part.width/2)){
-		return true;
-	}
-	return false;
-}
-
-function pintersectionY(part, line){
-	if(boverlap(part.y - part.width/2, part.y + part.width/2,line[1], line[1]) && boverlap(line[0], line[2], part.x - part.width/2, part.x + part.width/2)){
-		return true;
-	}
-	return false;
-}
-
-//Function for detecting if there is an intersection between a given line and the particle
-function pintersectionF(part, line){
-	if(!boverlap(line[0],line[2],part.x - part.width/2, part.x + part.width/2) || !boverlap(line[1],line[3],part.y - part.width/2, part.y + part.width/2)){
-		return false;
-	}
-	var a = part.x;
-	var c = part.y;
-	var r = part.width/2;
-	var m = (line[2] - line[0])/(line[3] - line[1]);
-	var b = line[1] - m*line[0];
-	if(Math.pow(r,2)*Math.pow(m,2) + 2*c*a*m - Math.pow(c,2)*Math.pow(m,2) - 2*b*c*m + Math.pow(r,2) +2*b*a - Math.pow(b,2) - Math.pow(a,2) >= 0){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-function boverlap(a1, a2, a3, a4){
-	if((a3 <= Math.max(a1,a2) && a3 >= Math.min(a1,a2)) || (a4 <= Math.max(a1,a2) && a4 >= Math.min(a1,a2))){
-		return true;
-	}
-	return false;
 }
