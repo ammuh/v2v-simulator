@@ -72,8 +72,10 @@ function messageUpdate(){
 	str += ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100);
 	str += ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6));
 	str += " \u00B7	\u03C0/6, collision: " + colCheck();
-	str += ", distanceToPoint: " + Math.floor(gps().dist);
-	str += ", rad: " + gps().rot;
+	if(gps()){
+		str += ", distanceToPoint: " + Math.floor(gps().dist);
+		str += ", rad: " + gps().rot;
+	}
 	label.setText(str);
 }
 //Particle Init
@@ -226,9 +228,9 @@ function particleState(){
 	if(particle.accel > 0 && particle.speed < 3){
 		accelerate(.4);
 	}
-	if(particle.accel < 0 && particle.speed - .5 >= 0){
-		accelerate(-.5);
-	}else if(particle.accel < 0 && particle.speed - .5 < 0){
+	if(particle.accel < 0 && particle.speed - 1 >= 0){
+		accelerate(-1);
+	}else if(particle.accel < 0 && particle.speed - 1 < 0){
 		particle.speed = 0;
 	}
 
@@ -257,9 +259,9 @@ function gps(){
 	var point = particle.route[i].point;
 
 	var hyp = Math.sqrt(Math.pow(particle.x - point[0], 2) + Math.pow(particle.y - point[1], 2));
-	if(hyp < 20){
+	if(hyp < 30){
 		particle.route[i].traveled = 1;
-		return {dist: 0, rot: 0};
+		return null;
 	}
 	var adj = point[0] - particle.x;
 	var rad = Math.acos(adj/hyp);
