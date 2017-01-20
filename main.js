@@ -65,9 +65,16 @@ function init(){
 
 //Message Board
 var fps = 0;
-function messageUpdate(col){
-	label.setText("  FPS: "+ fps +", accel: " + particle.accel + ", steer: " + particle.steer + ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100) + ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6)) + " \u00B7	\u03C0/6, collision: " + col);
-	return;
+function messageUpdate(){
+	var str = "";// = "  FPS: "+ fps;
+	str += "accel: " + particle.accel;
+	str += ", steer: " + particle.steer;
+	str += ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100);
+	str += ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6));
+	str += " \u00B7	\u03C0/6, collision: " + colCheck();
+	str += ", distanceToPoint: " + Math.floor(gps().dist);
+	str += ", rad: " + gps().rot;
+	label.setText(str);
 }
 //Particle Init
 var particle;
@@ -122,7 +129,8 @@ function driverState(){
 		x: particle.x,
 		y: particle.y,
 		rad: particle.rotation,
-		speed: particle.speed
+		speed: particle.speed,
+		gps: gps()
 	});
 }
 
@@ -203,7 +211,7 @@ function renderLoop(){
 	particleState();
 	fps = 8*Math.floor((1000 / (now - then))/8);
 	then = now;
-	messageUpdate(colCheck());
+	messageUpdate();
 	renderer.render(stage);
 }
 
@@ -215,7 +223,7 @@ function particleState(){
 	if(particle.steer < 0){
 		steer(-.1);
 	}
-	if(particle.accel > 0 && particle.speed < 4){
+	if(particle.accel > 0 && particle.speed < 3){
 		accelerate(.4);
 	}
 	if(particle.accel < 0 && particle.speed - .5 >= 0){
@@ -240,13 +248,13 @@ function accelerate(v){
 
 function gps(){
 	var i = 0;
-	while(particle.route[i].traveled == 0){
+	while(particle.route[i].traveled == 1){
 		i++;
 		if(i >= particle.route.length){
 			return null;
 		}
 	}
-	var point = particle.route[i].traveled;
+	var point = particle.route[i].point;
 	var hyp = Math.sqrt(Math.pow(particle.x - point[0], 2) + Math.pow(particle.y - point[1], 2));
 	if(hyp < 4){
 		return {dist: 0, rot: 0};
@@ -254,9 +262,9 @@ function gps(){
 	var adj = point[0] - particle.x;
 	var rad = Math.acos(adj/hyp);
 	if(point[1] > particle.y){
-		return {dist : hyp, rot: particle.rotation}
+		return {dist : hyp, rot: Math.PI/2+rad - particle.rotation}
 	}else{
-
+		return {dist : hyp, rot: Math.PI/2-rad - particle.rotation};
 	}
 }
 //Collision check for all lines stored in the lines array

@@ -4,9 +4,25 @@ onmessage = function(e) {
 		slines = e.data.stage;
 		console.log(slines);
 	}else{
+		var s;
+		var a;
+
+		if(e.data.gps.rot > 0){
+			s = 1;
+		}else if(e.data.gps.rot < 0){
+			s = -1;
+		}else{
+			s = 0;
+		}
+
+		if(e.data.gps.dist > 20){
+			a = 1;
+		}else{
+			a = -1;
+		}
 		var controllerMatrix = {
-			accel: 1,
-			steer: 1
+			accel: a,
+			steer: s
 		};
 		postMessage(controllerMatrix);
 	}
