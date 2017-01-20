@@ -80,79 +80,7 @@ function messageUpdate(){
 //Particle Init
 var particle;
 
-
 //Game Play
-
-
-
-
-
-//Keyboard functionality (I just copied this method from somewhere)
-function keyboard(keyCode) {
-  var key = {};
-  key.code = keyCode;
-  key.isDown = false;
-  key.isUp = true;
-  key.press = undefined;
-  key.release = undefined;
-  //The `downHandler`
-  key.downHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isUp && key.press) key.press();
-      key.isDown = true;
-      key.isUp = false;
-    }
-    event.preventDefault();
-  };
-
-  //The `upHandler`
-  key.upHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isDown && key.release) key.release();
-      key.isDown = false;
-      key.isUp = true;
-    }
-    event.preventDefault();
-  };
-
-  //Attach event listeners
-  window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
-  );
-  window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
-  );
-  return key;
-}
-
-//This is used to bind controlls to t
-/*var up, down, right, left;
-function bindKeys(){
-	up = keyboard(38);
-	down = keyboard(40);
-	right = keyboard(39);
-	left = keyboard(37);
-}
-function keyState(){
-	if(up.isDown){
-		particle.accel = 1;
-	}
-	if(down.isDown){
-		particle.accel = -1;
-	}
-	if(!down.isDown && !up.isDown){
-		particle.accel = 0;
-	}
-	if(right.isDown){
-		particle.steer = 1;
-	}
-	if(left.isDown){
-		particle.steer = -1;
-	}
-	if(!right.isDown && !left.isDown){
-		particle.steer = 0;
-	}
-}*/
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 var then = new Date;
