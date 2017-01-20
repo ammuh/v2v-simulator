@@ -255,8 +255,10 @@ function gps(){
 		}
 	}
 	var point = particle.route[i].point;
+
 	var hyp = Math.sqrt(Math.pow(particle.x - point[0], 2) + Math.pow(particle.y - point[1], 2));
-	if(hyp < 4){
+	if(hyp < 20){
+		particle.route[i].traveled = 1;
 		return {dist: 0, rot: 0};
 	}
 	var adj = point[0] - particle.x;
