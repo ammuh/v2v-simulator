@@ -158,14 +158,15 @@ class PathGraph {
 		}
 		path.unshift(target.getLocation());
 
-		path.unshift(start);
-		path.push(end);
+		if (!path[0].equals(new PathNode(start[0], start[1]))) {
+			path.unshift(start);
+		}
 
-		var uniquePath = path.filter(function(item, pos, self) {
-			return self.indexOf(item) == pos;
-		});
+		if (!path[path.length - 1].equals(new PathNode(end[0], end[1]))) {
+			path.push(end);
+		}
 
-		return uniquePath;
+		return path;
 	}
 
 	breadthFirstSearch(start, end) {
@@ -261,27 +262,8 @@ class PathNode {
 	getLocation() {
 		return [this.x, this.y];
 	}
-}
 
-function PriorityQueue () {
-  this._nodes = [];
-
-  this.enqueue = function (priority, key) {
-    this._nodes.push({key: key, priority: priority });
-    this.sort();
-  };
-
-  this.dequeue = function () {
-    return this._nodes.shift().key;
-  };
-
-  this.sort = function () {
-    this._nodes.sort(function (a, b) {
-      return a.priority - b.priority;
-    });
-  };
-
-  this.isEmpty = function () {
-    return !this._nodes.length;
-  };
+	equals(node) {
+		return (node.getX() == this.x && node.getY() == this.y);
+	}
 }
