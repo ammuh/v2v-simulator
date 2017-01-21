@@ -92,7 +92,7 @@ class PathGraph {
 		for (var i = 0; i < this.nodes.length; i++) {
 			var node = this.nodes[i];
 
-			if (node.source.getX() == pt[0] && node.source.getY() == pt[1]) {
+			if (node.source.getX() == pt1[0] && node.source.getY() == pt1[1]) {
 				return i;
 			}
 		}
