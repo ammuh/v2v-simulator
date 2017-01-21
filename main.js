@@ -110,6 +110,7 @@ function renderLoop(){
 		i++;
 	});
 	if(particleCollision(particle[0], particle[1])){
+		console.log(objectsInZone(particle[0], 60));
 		label.text = "OUCH";
 	}else{
 		label.text = "We Good";
@@ -173,9 +174,58 @@ function gps(part){
 	}
 }
 
+function dof(){
+	var degrees = [];
+	return degrees;
+}
+
+function objectsInZone(part, zone){
+	var objs = [];
+	for(var i = 0; i < particle.length; i++){
+		if(particle[i] != part){
+			if(pinZone(part, particle[i], zone)){
+				objs.push({
+					type: "particle",
+					data: {
+						x: particle[i].x,
+						y: particle[i].y,
+						w: particle[i].width
+					}
+				});
+			}
+		}
+	}
+	//DANGEROUS, but temporary circle resize
+	for(var i = 0; i < lpoints.length; i++){
+		if(linZone(part, lpoints[i], zone)){
+			objs.push({
+				type: "line",
+				data: lpoints[i]
+			});
+		}
+	}
+	return objs;
+}
+
 function particleCollision(part1, part2){
 	if(Math.pow(part1.x - part2.x, 2) + Math.pow(part1.y - part2.y, 2) <= Math.pow(part1.width,2)){
 		return true;
 	}
 	return false;
+}
+
+function pinZone(part1, part2, erad){
+	if(Math.pow(part1.x - part2.x, 2) + Math.pow(part1.y - part2.y, 2) <= Math.pow(part1.width+erad,2)){
+		return true;
+	}
+	return false;
+}
+
+function linZone(part1, line, erad){
+	part1.width += erad;
+	part1.height += erad;
+	var stat = part1.collisionCheck([line]);
+	part1.width -= erad;
+	part1.height -= erad;
+	return stat;
 }
