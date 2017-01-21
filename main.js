@@ -12,7 +12,6 @@ var renderer = autoDetectRenderer(720, 745, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
 var uiList = $("body").append("<ul></u>");
-var uiLabels = [];
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
 var lpoints = stageData;
 
@@ -23,6 +22,11 @@ var gNodes = graphEdges;
 var lines = [];
 
 var label;
+
+var pg;
+
+//Particle Array
+var particle;
 
 loader
 	.load(init);
@@ -42,30 +46,29 @@ function stageSet() {
 		ln.lineTo(lpoints[i][2], lpoints[i][3]);
 		lines.push(ln);
 	}
-	for(var a = 0; a < gNodes.length; a++){
-		for (var i = 0; i < gNodes[a].length; i++) {
-			var gfx = new Graphics();
-			ln.lineStyle(1, 0x2ecc71, 1);
-			ln.moveTo(gNodes[a][i][0][0], gNodes[a][i][0][1]);
-			ln.lineTo(gNodes[a][i][1][0], gNodes[a][i][1][1]);
-			stage.addChild(ln)
-		}
+
+	pg = new PathGraph();
+	for(i = 0; i < gNodes.length; i++){
+		var gfx = new Graphics();
+		ln.lineStyle(1, 0x2ecc71, 1);
+		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
+		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
+		pg.addEdge(gNodes[i][0], gNodes[i][1], false);
+		stage.addChild(ln);
 	}
 
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
 	}
-
-
 }
 
 function init(){
 	stageSet();
 	particle = [];
-	particle.push(Particle(200, 200, gNodes[0]));
-	particle.push(Particle(300, 300, gNodes[1]));
-	uiLabels.push($( "ul" ).append( "<li></li>" ));
-	uiLabels.push($( "ul" ).append( "<li></li>" ));
+	particle.push(Particle(200, 200, gNodes[0][0]));
+	particle.push(Particle(600, 600, gNodes[1][1]));
+	$( "ul" ).append( "<li></li>" );
+	$( "ul" ).append( "<li></li>" );
 	var i;
 	for(i = 0; i < particle.length; i++){
 		stage.addChild(particle[i]);
@@ -88,8 +91,8 @@ function messageUpdate(lbl, part){
 	}
 	$(lbl).text(str);
 }
-//Particle Init
-var particle;
+
+
 //Game Play
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
@@ -109,7 +112,28 @@ function renderLoop(){
 		messageUpdate(this, particle[i]);
 		i++;
 	});
+	if(particleCollision(particle[0], particle[1])){
+		console.log(objectsInZone(particle[0], 60));
+		label.text = "OUCH";
+	}else{
+		label.text = "We Good";
+	}
+	if(boundaryCollision()){
+		label.text = "Watch the sides fam";
+	}
+	
 	renderer.render(stage);
+}
+
+//Global Physics
+
+function boundaryCollision(){
+	for(var i = 0; i < particle.length; i++){
+		if(particle[i].collisionCheck(lpoints)){
+			return true;
+		}
+	}
+	return false;
 }
 
 //This function handles the position and behaviour of the particle
@@ -119,6 +143,7 @@ function gps(part){
 	while(part.route[i].traveled == 1){
 		i++;
 		if(i >= part.route.length){
+			part.stop();
 			return null;
 		}
 	}
@@ -132,8 +157,111 @@ function gps(part){
 	var adj = point[0] - part.x;
 	var rad = Math.acos(adj/hyp);
 	if(point[1] > part.y){
-		return {dist : hyp, rot: Math.PI/2+rad - part.rotation}
+		var rota = (Math.PI/2)+rad - part.rotation;
+		if(rota > Math.PI){
+			return {dist : hyp, rot: rota - (2*Math.PI)}
+		}else if(rota < -Math.PI){
+			return {dist : hyp, rot: rota + (2*Math.PI)}
+		}else{
+			return {dist : hyp, rot: rota};
+		}		
 	}else{
-		return {dist : hyp, rot: Math.PI/2-rad - part.rotation};
+		var rota = (Math.PI/2)-rad - part.rotation;
+		if(rota > Math.PI){
+			return {dist : hyp, rot: rota - (2*Math.PI)}
+		}else if(rota < -Math.PI){
+			return {dist : hyp, rot: rota + (2*Math.PI)}
+		}else{
+			return {dist : hyp, rot: rota};
+		}
 	}
+}
+
+function dof(part, zone){
+	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
+	var sections = Math.ceil(2*Math.PI/min_clearance);
+	var fibers = 16;
+	var fibpoints = [];
+	for(var i = 0; i < fibers; i++){
+		fibpoints.push([part.x, part.y, part.x-(zone+part.width)*Math.sin(i*(2*Math.PI/fibers)),part.y + (zone+part.width)*Math.cos(i*(2*Math.PI/fibers))]);
+	}
+	var objects = objectsInZone(part, zone);
+	for(var i = 0; i < objects.length; i++){
+		if(objects[i].type == "particle"){
+			for(var a = 0; a < fibpoints.length; a++){
+				if(objects[i].particle.collisionCheck(fibpoints[a])){
+					fibpoints[a] = null;
+				}
+
+			}
+		}
+	}
+	return fibpoints;
+}
+
+function objectsInZone(part, zone){
+	var objs = [];
+	for(var i = 0; i < particle.length; i++){
+		if(particle[i] != part){
+			if(pinZone(part, particle[i], zone)){
+				objs.push({
+					type: "particle",
+					particle: particle[i]
+				});
+			}
+		}
+	}
+	//DANGEROUS, but temporary circle resize
+	for(var i = 0; i < lpoints.length; i++){
+		if(linZone(part, lpoints[i], zone)){
+			objs.push({
+				type: "line",
+				data: lpoints[i]
+			});
+		}
+	}
+	return objs;
+}
+
+function particleCollision(part1, part2){
+	if(Math.pow(part1.x - part2.x, 2) + Math.pow(part1.y - part2.y, 2) <= Math.pow(part1.width,2)){
+		return true;
+	}
+	return false;
+}
+
+function pinZone(part1, part2, erad){
+	if(Math.pow(part1.x - part2.x, 2) + Math.pow(part1.y - part2.y, 2) <= Math.pow(part1.width+erad,2)){
+		return true;
+	}
+	return false;
+}
+
+function linZone(part1, line, erad){
+	part1.width += erad;
+	part1.height += erad;
+	var stat = part1.collisionCheck([line]);
+	part1.width -= erad;
+	part1.height -= erad;
+	return stat;
+}
+
+function lineIntersect(l1, l2){
+	if(l1[0] == l1[2] && l2[0] == l2[2]){
+		if(l1[0] != l2[0]){
+			return false;
+		}else if(!boverlap(l1[1], l1[3], l2[1], l2[3])){
+			return false;
+		}
+		return true;
+	}else if(l1[0] == l1[2]){
+		var m = (l2[3]-l2[1])/(l2[2]-l2[0]);
+		if(m*(l1[0] - l2[0]) + l2[1] > Math.max()){
+
+		}
+		return true;
+	}else if(l2[0] == l2[2]){
+
+	}
+	return false;
 }

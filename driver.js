@@ -6,28 +6,41 @@ onmessage = function(e) {
 	}else{
 		var s;
 		var a;
+		var b = 0;
 		if(e.data.gps == null){
-			a = -1;
+			a = 0;
 			s = 0;
+			b = 1;
 		}else{
 			if(e.data.gps.dist > 30){
-				a = 1;
+				if(e.data.speed >= 4){
+					a = 0;
+				}else{
+					a = .4;
+				}
 			}else{
-				a = -1;
+				b =1;
+				a = 0;
+				s = 0;
 			}
-			if(e.data.gps.rot > .15){
-				s = 1;
-				a = -1;
-			}else if(e.data.gps.rot < -.15){
-				s = -1;
-				a = -1;
+			if(e.data.gps.rot > .3){
+				s = .1;
+				b = 1;
+			}else if(e.data.gps.rot > 0){
+				s = .1;
+			}else if(e.data.gps.rot < -.3){
+				s = -.1;
+				b = 1;
+			}else if(e.data.gps.rot < 0){
+				s = -.1;
 			}else{
 				s = 0;
 			}
 		}
 		var controllerMatrix = {
 			accel: a,
-			steer: s
+			steer: s,
+			brake: b
 		};
 		postMessage(controllerMatrix);
 	}
