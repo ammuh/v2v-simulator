@@ -160,7 +160,7 @@ class PathGraph {
 		for (var i = 0; i < this.nodes.length; i++) {
 			distances.push({
 				source: this.nodes[i],
-				distance: 1 / 0;
+				distance: 1 / 0
 			});
 		}
 
