@@ -21,7 +21,14 @@ function Particle(x, y, dest){
 	sprite.accel = 0;
 	sprite.steer = 0;
 	//Routing
-	sprite.route = pg.shortestPath([x, y], dest);
+	sprite.route = [];
+	var rt = pg.shortestPath([x, y], dest);
+	for(var i = 0; i < rt.length; i++){
+		sprite.route.push({
+			traveled: 0,
+			point: rt[i]
+		});
+	}
 
 	sprite.collisionCheck = collisionCheck;
 	sprite.pintX = pintX;

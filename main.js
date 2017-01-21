@@ -65,8 +65,8 @@ function stageSet() {
 function init(){
 	stageSet();
 	particle = [];
-	particle.push(Particle(200, 200, gNodes[0]));
-	particle.push(Particle(300, 300, gNodes[1]));
+	particle.push(Particle(200, 200, gNodes[0][0]));
+	particle.push(Particle(600, 600, gNodes[1][1]));
 	$( "ul" ).append( "<li></li>" );
 	$( "ul" ).append( "<li></li>" );
 	var i;
@@ -177,9 +177,26 @@ function gps(part){
 	}
 }
 
-function dof(){
-	var degrees = [];
-	return degrees;
+function dof(part, zone){
+	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
+	var sections = Math.ceil(2*Math.PI/min_clearance);
+	var fibers = 16;
+	var fibpoints = [];
+	for(var i = 0; i < fibers; i++){
+		fibpoints.push([part.x, part.y, part.x-(zone+part.width)*Math.sin(i*(2*Math.PI/fibers)),part.y + (zone+part.width)*Math.cos(i*(2*Math.PI/fibers))]);
+	}
+	var objects = objectsInZone(part, zone);
+	for(var i = 0; i < objects.length; i++){
+		if(objects[i].type == "particle"){
+			for(var a = 0; a < fibpoints.length; a++){
+				if(objects[i].particle.collisionCheck(fibpoints[a])){
+					fibpoints[a] = null;
+				}
+
+			}
+		}
+	}
+	return fibpoints;
 }
 
 function objectsInZone(part, zone){
@@ -189,11 +206,7 @@ function objectsInZone(part, zone){
 			if(pinZone(part, particle[i], zone)){
 				objs.push({
 					type: "particle",
-					data: {
-						x: particle[i].x,
-						y: particle[i].y,
-						w: particle[i].width
-					}
+					particle: particle[i]
 				});
 			}
 		}
@@ -231,4 +244,24 @@ function linZone(part1, line, erad){
 	part1.width -= erad;
 	part1.height -= erad;
 	return stat;
+}
+
+function lineIntersect(l1, l2){
+	if(l1[0] == l1[2] && l2[0] == l2[2]){
+		if(l1[0] != l2[0]){
+			return false;
+		}else if(!boverlap(l1[1], l1[3], l2[1], l2[3])){
+			return false;
+		}
+		return true;
+	}else if(l1[0] == l1[2]){
+		var m = (l2[3]-l2[1])/(l2[2]-l2[0]);
+		if(m*(l1[0] - l2[0]) + l2[1] > Math.max()){
+
+		}
+		return true;
+	}else if(l2[0] == l2[2]){
+
+	}
+	return false;
 }
