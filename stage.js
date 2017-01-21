@@ -122,10 +122,10 @@ class PathGraph {
 }
 
 class PathNode {
-	constructor(x, y) {
-		this.x = x;
-		this.y = y;
-	}
+		constructor(x, y) {
+			this.x = x;
+			this.y = y;
+		}
 
 	getX() {
 		return this.x;

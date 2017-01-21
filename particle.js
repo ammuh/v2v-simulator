@@ -24,10 +24,10 @@ function Particle(x, y){
 	//Routing
 	sprite.route = [];
 	var i;
-	for(i = 0; i < graphNodes.length; i++){
-		sprite.route.push({traveled: 0, point:graphNodes[i][0]});
-		if(graphNodes.length - 1 == i){
-			sprite.route.push({traveled: 0, point:graphNodes[i][1]});
+	for(i = 0; i < graphEdges.length; i++){
+		sprite.route.push({traveled: 0, point:graphEdges[i][0]});
+		if(graphEdges.length - 1 == i){
+			sprite.route.push({traveled: 0, point:graphEdges[i][1]});
 		}
 	}
 
@@ -50,13 +50,14 @@ function Particle(x, y){
 }
 
 function driverState(){
+	var obj = this;
 	this.driver.postMessage({
 		header:"partdata",
 		x: this.x,
 		y: this.y,
 		rad: this.rotation,
 		speed: this.speed,
-		gps: gps()
+		gps: gps(obj)
 	});
 }
 

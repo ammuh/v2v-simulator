@@ -16,7 +16,7 @@ document.body.appendChild(renderer.view);
 var lpoints = stageData;
 
 // These are the graph nodes
-var gNodes = graphNodes;
+var gNodes = graphEdges;
 
 //This is a global array that stores all the lines
 var lines = [];
@@ -71,88 +71,16 @@ function messageUpdate(){
 	str += ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100);
 	str += ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6));
 	str += " \u00B7	\u03C0/6, collision: " + particle.collisionCheck(stageData);
-	if(gps()){
-		str += ", distanceToPoint: " + Math.floor(gps().dist);
-		str += ", rad: " + gps().rot;
+	if(gps(particle)){
+		str += ", distanceToPoint: " + Math.floor(gps(particle).dist);
+		str += ", rad: " + gps(particle).rot;
 	}
 	label.setText(str);
 }
 //Particle Init
 var particle;
 
-
 //Game Play
-
-
-
-
-
-//Keyboard functionality (I just copied this method from somewhere)
-function keyboard(keyCode) {
-  var key = {};
-  key.code = keyCode;
-  key.isDown = false;
-  key.isUp = true;
-  key.press = undefined;
-  key.release = undefined;
-  //The `downHandler`
-  key.downHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isUp && key.press) key.press();
-      key.isDown = true;
-      key.isUp = false;
-    }
-    event.preventDefault();
-  };
-
-  //The `upHandler`
-  key.upHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isDown && key.release) key.release();
-      key.isDown = false;
-      key.isUp = true;
-    }
-    event.preventDefault();
-  };
-
-  //Attach event listeners
-  window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
-  );
-  window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
-  );
-  return key;
-}
-
-//This is used to bind controlls to t
-/*var up, down, right, left;
-function bindKeys(){
-	up = keyboard(38);
-	down = keyboard(40);
-	right = keyboard(39);
-	left = keyboard(37);
-}
-function keyState(){
-	if(up.isDown){
-		particle.accel = 1;
-	}
-	if(down.isDown){
-		particle.accel = -1;
-	}
-	if(!down.isDown && !up.isDown){
-		particle.accel = 0;
-	}
-	if(right.isDown){
-		particle.steer = 1;
-	}
-	if(left.isDown){
-		particle.steer = -1;
-	}
-	if(!right.isDown && !left.isDown){
-		particle.steer = 0;
-	}
-}*/
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
 var then = new Date;
@@ -171,26 +99,26 @@ function renderLoop(){
 
 
 
-function gps(){
+function gps(part){
 	var i = 0;
-	while(particle.route[i].traveled == 1){
+	while(part.route[i].traveled == 1){
 		i++;
-		if(i >= particle.route.length){
+		if(i >= part.route.length){
 			return null;
 		}
 	}
-	var point = particle.route[i].point;
+	var point = part.route[i].point;
 
-	var hyp = Math.sqrt(Math.pow(particle.x - point[0], 2) + Math.pow(particle.y - point[1], 2));
+	var hyp = Math.sqrt(Math.pow(part.x - point[0], 2) + Math.pow(part.y - point[1], 2));
 	if(hyp < 30){
-		particle.route[i].traveled = 1;
+		part.route[i].traveled = 1;
 		return null;
 	}
-	var adj = point[0] - particle.x;
+	var adj = point[0] - part.x;
 	var rad = Math.acos(adj/hyp);
-	if(point[1] > particle.y){
-		return {dist : hyp, rot: Math.PI/2+rad - particle.rotation}
+	if(point[1] > part.y){
+		return {dist : hyp, rot: Math.PI/2+rad - part.rotation}
 	}else{
-		return {dist : hyp, rot: Math.PI/2-rad - particle.rotation};
+		return {dist : hyp, rot: Math.PI/2-rad - part.rotation};
 	}
 }
