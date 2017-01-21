@@ -50,13 +50,14 @@ function Particle(x, y){
 }
 
 function driverState(){
+	var obj = this;
 	this.driver.postMessage({
 		header:"partdata",
 		x: this.x,
 		y: this.y,
 		rad: this.rotation,
 		speed: this.speed,
-		gps: gps()
+		gps: gps(obj)
 	});
 }
 

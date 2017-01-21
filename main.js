@@ -71,9 +71,9 @@ function messageUpdate(){
 	str += ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100);
 	str += ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6));
 	str += " \u00B7	\u03C0/6, collision: " + particle.collisionCheck(stageData);
-	if(gps()){
-		str += ", distanceToPoint: " + Math.floor(gps().dist);
-		str += ", rad: " + gps().rot;
+	if(gps(particle)){
+		str += ", distanceToPoint: " + Math.floor(gps(particle).dist);
+		str += ", rad: " + gps(particle).rot;
 	}
 	label.setText(str);
 }
@@ -99,26 +99,26 @@ function renderLoop(){
 
 
 
-function gps(){
+function gps(part){
 	var i = 0;
-	while(particle.route[i].traveled == 1){
+	while(part.route[i].traveled == 1){
 		i++;
-		if(i >= particle.route.length){
+		if(i >= part.route.length){
 			return null;
 		}
 	}
-	var point = particle.route[i].point;
+	var point = part.route[i].point;
 
-	var hyp = Math.sqrt(Math.pow(particle.x - point[0], 2) + Math.pow(particle.y - point[1], 2));
+	var hyp = Math.sqrt(Math.pow(part.x - point[0], 2) + Math.pow(part.y - point[1], 2));
 	if(hyp < 30){
-		particle.route[i].traveled = 1;
+		part.route[i].traveled = 1;
 		return null;
 	}
-	var adj = point[0] - particle.x;
+	var adj = point[0] - part.x;
 	var rad = Math.acos(adj/hyp);
-	if(point[1] > particle.y){
-		return {dist : hyp, rot: Math.PI/2+rad - particle.rotation}
+	if(point[1] > part.y){
+		return {dist : hyp, rot: Math.PI/2+rad - part.rotation}
 	}else{
-		return {dist : hyp, rot: Math.PI/2-rad - particle.rotation};
+		return {dist : hyp, rot: Math.PI/2-rad - part.rotation};
 	}
 }
