@@ -204,7 +204,7 @@ class PathGraph {
 				if (!visitedNode) {
 					unvisited.push(node);
 					var distInd = this.findEdge(distances, [node.getX(), node.getY()]);
-					distances[] = Math.min(distances[distInd], distances[currentDistInd] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
+					distances[distInd] = Math.min(distances[distInd], distances[currentDistInd] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
 				}
 			}
 
