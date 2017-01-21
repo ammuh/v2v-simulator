@@ -17,7 +17,6 @@ class Stage {
 	}
 
 	addPathNode(pt1, pt2, oneWay) {
-		console.log("method called");
 		this.graph.addEdge(pt1, pt2, oneWay);
 	}
 
@@ -55,7 +54,6 @@ class PathGraph {
 	}
 
 	addEdge(pt1, pt2, oneWay) {
-		console.log("adding");
 		var path1 = new PathNode(pt1[0], pt1[1]);
 		var path2 = new PathNode(pt2[0], pt2[1]);
 
@@ -151,17 +149,6 @@ class PathGraph {
 	}
 
 	breadthFirstSearch(start, end) {
-		// var queue = [start];
-		//
-		// while (queue.length > 0) {
-		// 	var node = queue.pop();
-		// 	var adj = this.getAdjacentEdges(node);
-		//
-		// 	for (var n in adj) {
-		// 		queue.push(n);
-		// 	}
-		// }
-
 		var distances = {};
 		var unvisited = [start];
 		var visited = [];
