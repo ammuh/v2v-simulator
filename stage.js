@@ -49,9 +49,15 @@ class PathGraph {
 		this.nodes = {}
 	}
 
+	distance(x1, y1, x2, y2) {
+		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	}
+
 	addEdge(pt1, pt2, oneWay) {
 		var path1 = new PathNode(pt1[0], pt1[1]);
 		var path2 = new PathNode(pt2[0], pt2[1]);
+
+		var dist = this.distance(path1.getX(), path1.getY(), path2.getX(), path2.getY());
 
 		if (!this.nodes.hasOwnProperty(path1)) {
 			this.nodes[path1] = [];
@@ -91,11 +97,83 @@ class PathGraph {
 		}
 	}
 
+	getAdjacentEdges(node) {
+		if (this.nodes.hasOwnProperty(node)) {
+			return this.nodes[node];
+		}
+
+		return null;
+	}
+
 	shortestPath(start, end) {
 		var path1 = new PathNode(start[0], start[1]);
 		var path2 = new PathNode(end[0], end[1]);
 
+		var root = this.findClosestNode(start[0], start[1]);
+		var dest = this.findClosestNode(end[0], end[1]);
+
+		var queue = [];
+
+		// breadFirstSearch
+
 		return [];
+	}
+
+	breadthFirstSearch(start, end) {
+		// var queue = [start];
+		//
+		// while (queue.length > 0) {
+		// 	var node = queue.pop();
+		// 	var adj = this.getAdjacentEdges(node);
+		//
+		// 	for (var n in adj) {
+		// 		queue.push(n);
+		// 	}
+		// }
+
+		var distances = {};
+		var unvisited = [start];
+		var visited = [];
+
+		distances[start] = 0;
+		for (var node in Object.keys(this.node)) {
+			distances[node] = 1 / 0;
+		}
+
+		var current = start;
+
+		while (!visited.includes(end) && unvisited.length > 0) {
+			var currentIndex = -1;
+
+			// Find next traversable node
+			for (var i = 0; i < unvisited.length; i++) {
+				var node = unvisited[i];
+
+				if (distance[node] < distances[current]) {
+					current = node;
+					currentIndex = i;
+				}
+			}
+
+			// Remove from unvisited list
+			if (currentIndex >= 0 && currentIndex < unvisited.length) {
+				unvisited.splice(currentIndex, 1);
+			}
+
+			// Calculate incremental distances for adjacent nodes
+			var adj = this.getAdjacentEdges(current);
+			for (var node in adj) {
+				if (!visited.includes(node)) {
+					unvisited.push(node);
+					distances[node] = Math.min(distances[node], distance[current] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
+				}
+			}
+
+			// Add node to visited list
+			visited.push(current);
+		}
+
+		return visited;
 	}
 
 	findClosestNode(pt) {
@@ -134,4 +212,27 @@ class PathNode {
 	getY() {
 		return this.y;
 	}
+}
+
+function PriorityQueue () {
+  this._nodes = [];
+
+  this.enqueue = function (priority, key) {
+    this._nodes.push({key: key, priority: priority });
+    this.sort();
+  };
+
+  this.dequeue = function () {
+    return this._nodes.shift().key;
+  };
+
+  this.sort = function () {
+    this._nodes.sort(function (a, b) {
+      return a.priority - b.priority;
+    });
+  };
+
+  this.isEmpty = function () {
+    return !this._nodes.length;
+  };
 }
