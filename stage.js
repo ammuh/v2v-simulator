@@ -161,7 +161,7 @@ class PathGraph {
 		path.unshift(start);
 		path.push(end);
 
-		uniquePath = path.filter(function(item, pos, self) {
+		var uniquePath = path.filter(function(item, pos, self) {
 			return self.indexOf(item) == pos;
 		});
 
