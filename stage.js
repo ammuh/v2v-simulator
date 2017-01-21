@@ -149,11 +149,11 @@ class PathGraph {
 
 		var path = [];
 		var target = end;
-		var ind = this.findEdge(previous, target.getLocation());
+		var ind = this.findEdge(res, target.getLocation());
 
 		while (ind != 1) {
 			path.unshift(target.getLocation());
-			target = previous[ind].previous.source;
+			target = res[ind].previous.source;
 		}
 		path.unshift(target);
 
