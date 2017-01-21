@@ -112,7 +112,7 @@ class PathGraph {
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
-		return breadthFirstSearch(root, dest);
+		return this.breadthFirstSearch(root, dest);
 	}
 
 	breadthFirstSearch(start, end) {
@@ -179,7 +179,7 @@ class PathGraph {
 		var keys = Object.keys(this.nodes);
 		for (var i; i < keys; i++) {
 			var key = keys[i];
-			
+
 			var x1 = key.getX();
 			var y1 = key.getY();
 
