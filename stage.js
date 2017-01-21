@@ -114,9 +114,7 @@ class PathGraph {
 
 		var queue = [];
 
-		// breadFirstSearch
-
-		return [];
+		return breadthFirstSearch(root, dest);
 	}
 
 	breadthFirstSearch(start, end) {
