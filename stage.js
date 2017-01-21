@@ -132,7 +132,8 @@ class PathGraph {
 		var visited = [];
 
 		distances[start] = 0;
-		for (var node in Object.keys(this.node)) {
+		var keys = Object.keys(this.node);
+		for (var i = 0; i < keys.length; i++) {
 			distances[node] = 1 / 0;
 		}
 
