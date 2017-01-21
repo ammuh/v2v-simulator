@@ -46,7 +46,7 @@ class Stage {
 
 class PathGraph {
 	constructor() {
-		this.nodes = {}
+		this.nodes = [];
 	}
 
 	distance(x1, y1, x2, y2) {
@@ -57,50 +57,85 @@ class PathGraph {
 		var path1 = new PathNode(pt1[0], pt1[1]);
 		var path2 = new PathNode(pt2[0], pt2[1]);
 
-		if (!this.nodes.hasOwnProperty(path1)) {
-			this.nodes[path1] = [];
-			this.nodes[path1].push(path2);
+		var src = this.findEdge(pt1);
+
+		if (src == -1) {
+			var relation = {};
+
+			relation.source = path1;
+			relation.adjacent = [path2];
+
+			this.nodes.push(relation);
 		} else {
-			this.nodes[path1].push(path2);
+			this.nodes[src].adjacent.push(path2);
 		}
 
 		if (!oneWay) {
-			if (!this.nodes.hasOwnProperty(path2)) {
-				this.nodes[path2] = [];
-				this.nodes[path2].push(path1);
+			src = this.findEdge(pt2);
+
+			if (src == -1) {
+				var relation = {};
+
+				relation.source = path2;
+				relation.adjacent = [path1];
+
+				this.nodes.push(relation);
 			} else {
-				this.nodes[path2].push(path1);
+				this.nodes[src].adjacent.push(path1);
 			}
 		}
 	}
 
-	removeEdge(pt1, pt2) {
-		var path1 = new PathNode(pt1[0], pt1[1]);
-		var path2 = new PathNode(pt2[0], pt2[1]);
+	findEdge(pt1) {
+		for (var i = 0; i < this.nodes.length; i++) {
+			var node = this.nodes[i];
 
-		if (this.nodes.hasOwnProperty(path1)) {
-			var index = this.nodes[path1].indexOf(path2);
-
-			if (index > -1) {
-				this.nodes[path1].splice(index, 1);
+			if (node.source.getX() == pt[0] && node.source.getY() == pt[1]) {
+				return i;
 			}
 		}
 
-		if (this.nodes.hasOwnProperty(path2)) {
-			var index = this.nodes[path2].indexOf(path1);
+		return -1;
+	}
 
-			if (index > -1) {
-				this.nodes[path2].splice(index, 1);
+	edgeExists(pt1) {
+		return this.findEdge(pt1)  == -1 ? false : true;
+	}
+
+	removeEdge(pt1, pt2) {
+		var src = this.findEdge(pt1);
+
+		if (src > -1) {
+			var adj = this.nodes[src].adjacent;
+
+			for (var i = 0; i < adj.length; i++) {
+				if (adj[i].getX() == pt2[0] && adj[i].getY() == pt2[1]) {
+					adj.splice(i, 1);
+				}
+			}
+		}
+
+		src = this.findEdge(pt2);
+
+		if (src > -1) {
+			var adj = this.nodes[src].adjacent;
+
+			for (var i = 0; i < adj.length; i++) {
+				if (adj[i].getX() == pt1[0] && adj[i].getY() == pt1[1]) {
+					adj.splice(i, 1);
+				}
 			}
 		}
 	}
 
 	getAdjacentEdges(node) {
-		if (this.nodes.hasOwnProperty(node)) {
-			return this.nodes[node];
-		}
+		var src = this.findEdge([node.getX(), node.getY()]);
 
-		return null;
+		if (src == -1) {
+			return null;
+		} else {
+			return this.nodes[src].adjacent;
+		}
 	}
 
 	shortestPath(start, end) {
@@ -174,6 +209,21 @@ class PathGraph {
 	}
 
 	findClosestNode(pt) {
+		var min = this.nodes[0].source;
+		var minDist = this.distance(min.getX(), min.getY(), pt[0], pt[1]);
+
+		for (var i = 1; i < this.nodes.length; i++) {
+			var node = this.nodes[i].source;
+			var dist = this.distance(node.getX(), node.getY(), pt[0], pt[1]);
+
+			if (dist < minDist) {
+				minDist = dist;
+				min = node;
+			}
+		}
+
+		return min;
+
 		console.log(this.nodes)
 		var min = new PathNode(0, 0);
 		var minDist = Math.sqrt(Math.pow(pt[0], 2) + Math.pow(pt[1], 2));
