@@ -11,7 +11,8 @@ var Container = PIXI.Container,
 var renderer = autoDetectRenderer(720, 745, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
-
+var uiList = $("body").append("<ul></u>");
+var uiLabels = [];
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
 var lpoints = stageData;
 
@@ -48,12 +49,14 @@ function stageSet() {
 			ln.moveTo(gNodes[a][i][0][0], gNodes[a][i][0][1]);
 			ln.lineTo(gNodes[a][i][1][0], gNodes[a][i][1][1]);
 			stage.addChild(ln)
-		}	
+		}
 	}
 
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
 	}
+
+
 }
 
 function init(){
@@ -61,6 +64,8 @@ function init(){
 	particle = [];
 	particle.push(Particle(200, 200, gNodes[0]));
 	particle.push(Particle(300, 300, gNodes[1]));
+	uiLabels.push($( "ul" ).append( "<li></li>" ));
+	uiLabels.push($( "ul" ).append( "<li></li>" ));
 	var i;
 	for(i = 0; i < particle.length; i++){
 		stage.addChild(particle[i]);
@@ -70,18 +75,18 @@ function init(){
 
 //Message Board
 var fps = 0;
-function messageUpdate(){
+function messageUpdate(lbl, part){
 	var str = "";// = "  FPS: "+ fps;
-	str += "accel: " + particle[0].accel;
-	str += ", steer: " + particle[0].steer;
-	str += ", speed: " + (Math.round(particle[0].speed) + Math.round(100*(particle[0].speed - Math.floor(particle[0].speed)))/100);
-	str += ", rotation (Approx): " + Math.floor(particle[0].rotation/(Math.PI/6));
-	str += " \u00B7	\u03C0/6, collision: " + particle[0].collisionCheck(stageData);
-	if(gps(particle[0])){
-		str += ", distanceToPoint: " + Math.floor(gps(particle[0]).dist);
-		str += ", rad: " + gps(particle[0]).rot;
+	str += "accel: " + part.accel;
+	str += ", steer: " + part.steer;
+	str += ", speed: " + (Math.round(part.speed) + Math.round(100*(part.speed - Math.floor(part.speed)))/100);
+	str += ", rotation (Approx): " + Math.floor(part.rotation/(Math.PI/6));
+	str += " \u00B7	\u03C0/6, collision: " + part.collisionCheck(stageData);
+	if(gps(part)){
+		str += ", distanceToPoint: " + Math.floor(gps(part).dist);
+		str += ", rad: " + gps(part).rot;
 	}
-	label.setText(str);
+	$(lbl).text(str);
 }
 //Particle Init
 var particle;
@@ -99,7 +104,11 @@ function renderLoop(){
 	}
 	fps = 8*Math.floor((1000 / (now - then))/8);
 	then = now;
-	messageUpdate();
+	i = 0;
+	$("ul li").each(function() {
+		messageUpdate(this, particle[i]);
+		i++;
+	});
 	renderer.render(stage);
 }
 
