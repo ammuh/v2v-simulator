@@ -180,7 +180,7 @@ function gps(part){
 function dof(part, zone){
 	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
 	var sections = Math.ceil(2*Math.PI/min_clearance);
-	var fibers = 16;
+	var fibers = sections;
 	var fibpoints = [];
 	for(var i = 0; i < fibers; i++){
 		fibpoints.push([part.x, part.y, part.x-(zone+part.width)*Math.sin(i*(2*Math.PI/fibers)),part.y + (zone+part.width)*Math.cos(i*(2*Math.PI/fibers))]);
@@ -246,22 +246,42 @@ function linZone(part1, line, erad){
 	return stat;
 }
 
-function lineIntersect(l1, l2){
-	if(l1[0] == l1[2] && l2[0] == l2[2]){
-		if(l1[0] != l2[0]){
-			return false;
-		}else if(!boverlap(l1[1], l1[3], l2[1], l2[3])){
-			return false;
-		}
-		return true;
-	}else if(l1[0] == l1[2]){
-		var m = (l2[3]-l2[1])/(l2[2]-l2[0]);
-		if(m*(l1[0] - l2[0]) + l2[1] > Math.max()){
-
-		}
-		return true;
-	}else if(l2[0] == l2[2]){
-
+function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
+	if(y2 ==0 && y1 == 0 &&y3 == 0 && y4 ==0){
+		return boverlap(y1, y2, y3, y4);
+	}else if(x2 ==0 && x1 == 0 && x3 == 0 && x4 ==0){
+		return boverlap(x1, x2, x3, x4);
+	}else if(x2 ==0 && x1 == 0){
+		return boverlap((y4-y3)/(x4-x3)*(x1-x3)+y3, (y4-y3)/(x4-x3)*(x1-x3)+y3, y3, y4);
+	}else if(x3 ==0 && x4 == 0){
+		return boverlap((y2-y1)/(x2-x1)*(x3-x1)+y1, (y2-y1)/(x2-x1)*(x3-x1)+y1, y1, y2);
 	}
-	return false;
+
+    var x=((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+    var y=((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+    if (isNaN(x)||isNaN(y)) {
+        return false;
+    } else {
+        if (x1>=x2) {
+            if (!(x2<=x&&x<=x1)) {return false;}
+        } else {
+            if (!(x1<=x&&x<=x2)) {return false;}
+        }
+        if (y1>=y2) {
+            if (!(y2<=y&&y<=y1)) {return false;}
+        } else {
+            if (!(y1<=y&&y<=y2)) {return false;}
+        }
+        if (x3>=x4) {
+            if (!(x4<=x&&x<=x3)) {return false;}
+        } else {
+            if (!(x3<=x&&x<=x4)) {return false;}
+        }
+        if (y3>=y4) {
+            if (!(y4<=y&&y<=y3)) {return false;}
+        } else {
+            if (!(y3<=y&&y<=y4)) {return false;}
+        }
+    }
+    return true;
 }
