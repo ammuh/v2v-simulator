@@ -98,8 +98,8 @@ class PathGraph {
 		return -1;
 	}
 
-	edgeExists(pt1) {
-		return this.findEdge(this.nodes, pt1)  == -1 ? false : true;
+	edgeExists(list, pt1) {
+		return this.findEdge(list, pt1)  == -1 ? false : true;
 	}
 
 	removeEdge(pt1, pt2) {
@@ -158,10 +158,12 @@ class PathGraph {
 		}];
 
 		for (var i = 0; i < this.nodes.length; i++) {
-			distances.push({
-				source: this.nodes[i].source,
-				distance: 1 / 0
-			});
+			if (!this.edgeExists(distances, this.nodes[i].getLocation())) 
+				distances.push({
+					source: this.nodes[i].source,
+					distance: 1 / 0
+				});
+			}
 		}
 
 		var current = start;
