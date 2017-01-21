@@ -109,6 +109,15 @@ function renderLoop(){
 		messageUpdate(this, particle[i]);
 		i++;
 	});
+	if(particleCollision(particle[0], particle[1])){
+		label.text = "OUCH";
+	}else{
+		label.text = "We Good";
+	}
+	if(boundaryCollision()){
+		label.text = "Watch the sides fam";
+	}
+	
 	renderer.render(stage);
 }
 
@@ -117,11 +126,10 @@ function renderLoop(){
 function boundaryCollision(){
 	for(var i = 0; i < particle.length; i++){
 		if(particle[i].collisionCheck(lpoints)){
-			particle[i].stop();
-			particle[i].backtrack();
+			return true;
 		}
 	}
-	return collisionPairs;
+	return false;
 }
 
 //This function handles the position and behaviour of the particle
@@ -163,4 +171,11 @@ function gps(part){
 			return {dist : hyp, rot: rota};
 		}
 	}
+}
+
+function particleCollision(part1, part2){
+	if(Math.pow(part1.x - part2.x, 2) + Math.pow(part1.y - part2.y, 2) <= Math.pow(part1.width,2)){
+		return true;
+	}
+	return false;
 }
