@@ -112,8 +112,6 @@ class PathGraph {
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
-		var queue = [];
-
 		return breadthFirstSearch(root, dest);
 	}
 
@@ -178,7 +176,10 @@ class PathGraph {
 		var min = new PathNode(0, 0);
 		var minDist = Math.sqrt(Math.pow(pt[0], 2) + Math.pow(pt[1], 2));
 
-		for (var key in Object.keys(this.nodes)) {
+		var keys = Object.keys(this.nodes);
+		for (var i; i < keys; i++) {
+			var key = keys[i];
+			
 			var x1 = key.getX();
 			var y1 = key.getY();
 
