@@ -25,6 +25,8 @@ class Stage {
 	}
 
 	addParticle(startX, startY, endX, endY) {
+		var shortestPath = this.getGraph().shortestPath([startX, startY], [endX, endY]);
+
 		var particle = {
 			spawn: {
 				x: startX,
@@ -33,7 +35,8 @@ class Stage {
 			destination: {
 				x: endX,
 				y: endY
-			}
+			},
+			path: shortestPath
 		};
 
 		this.particles.push(particle);
@@ -155,6 +158,14 @@ class PathGraph {
 		}
 		path.unshift(target.getLocation());
 
+		if (path[0][0] == start[0] && path[0][1] == start[1]) {
+			path.splice(0, 1);
+		}
+
+		if (path[path.length - 1][0] != end[0] || path[path.length - 1][1] != end[1]) {
+			path.push(end);
+		}
+
 		return path;
 	}
 
@@ -251,27 +262,8 @@ class PathNode {
 	getLocation() {
 		return [this.x, this.y];
 	}
-}
 
-function PriorityQueue () {
-  this._nodes = [];
-
-  this.enqueue = function (priority, key) {
-    this._nodes.push({key: key, priority: priority });
-    this.sort();
-  };
-
-  this.dequeue = function () {
-    return this._nodes.shift().key;
-  };
-
-  this.sort = function () {
-    this._nodes.sort(function (a, b) {
-      return a.priority - b.priority;
-    });
-  };
-
-  this.isEmpty = function () {
-    return !this._nodes.length;
-  };
+	equals(node) {
+		return (node.getX() == this.x && node.getY() == this.y);
+	}
 }
