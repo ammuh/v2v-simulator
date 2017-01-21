@@ -25,6 +25,8 @@ class Stage {
 	}
 
 	addParticle(startX, startY, endX, endY) {
+		var shortestPath = this.getGraph().shortestPath([startX, startY], [endX, endY]);
+
 		var particle = {
 			spawn: {
 				x: startX,
@@ -33,7 +35,8 @@ class Stage {
 			destination: {
 				x: endX,
 				y: endY
-			}
+			},
+			path: shortestPath
 		};
 
 		this.particles.push(particle);
@@ -158,16 +161,11 @@ class PathGraph {
 		path.unshift(start);
 		path.push(end);
 
-		for (var i = 0; i < path.length - 1; i++) {
-			for (var k = 1; k < path.length; k++) {
-				if (path[i][0] == path[k][0] && path[i][1] == path[k][1]) {
-					path.splice(k, 1);
-					k--;
-				}
-			}
-		}
+		uniquePath = path.filter(function(item, pos, self) {
+			return self.indexOf(item) == pos;
+		});
 
-		return path;
+		return uniquePath;
 	}
 
 	breadthFirstSearch(start, end) {
