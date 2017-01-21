@@ -161,6 +161,8 @@ class PathGraph {
 			});
 		}
 
+		console.log(start);
+		console.log(distances);
 		var srcInd = this.findEdge(distances, start);
 		distances[srcInd].distance = 0;
 
