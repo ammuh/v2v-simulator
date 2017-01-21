@@ -180,7 +180,7 @@ class PathGraph {
 		var minDist = Math.sqrt(Math.pow(pt[0], 2) + Math.pow(pt[1], 2));
 		console.log("initial min:", minDist)
 		var keys = Object.keys(this.nodes);
-		console.log("keys", keys);
+		console.log("key", keys[0]);
 		for (var i = 0; i < keys; i++) {
 			var key = keys[i];
 
