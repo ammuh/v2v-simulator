@@ -152,11 +152,16 @@ class PathGraph {
 		var unvisited = [start];
 		var visited = [];
 
-		start.setDistance(0);
-		var distances = [start];
+		var distances = [{
+			source: start,
+			distance: 0
+		}]
 
 		for (var i = 0; i < this.nodes.length; i++) {
-			distances.push(this.nodes[i]);
+			distances.push({
+				source: this.nodes[i].source,
+				distance: 1 / 0
+			});
 		}
 
 		var current = start;
@@ -172,7 +177,7 @@ class PathGraph {
 				console.log(distances);
 				var index = this.findEdge(distances, unvisited[i]);
 
-				if (distances[index].getDistance() < distances[currentDistInd].getDistance()) {
+				if (distances[index].distance < distances[currentDistInd].distance) {
 					current = unvisited[i];
 					currentDistInd = this.findEdge(distances, current);
 					currentIndex = i;
@@ -200,7 +205,7 @@ class PathGraph {
 				if (!visitedNode) {
 					unvisited.push(node);
 					var distInd = this.findEdge(distances, [node.getX(), node.getY()]);
-					distances[distInd].setDistance(Math.min(distances[distInd].getDistance() , distances[currentDistInd].getDistance() + this.distance(current.getX(), current.getY(), node.getX(), node.getY())));
+					distances[distInd].distance = Math.min(distances[distInd].distance, distances[currentDistInd].distance + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
 				}
 			}
 
@@ -236,7 +241,6 @@ class PathNode {
 	constructor(x, y) {
 		this.x = x;
 		this.y = y;
-		this.distance = 1 / 0;
 	}
 
 	getX() {
@@ -245,18 +249,6 @@ class PathNode {
 
 	getY() {
 		return this.y;
-	}
-
-	getLocation() {
-		return [this.x, this.y];
-	}
-
-	getDistance() {
-		return this.distance;
-	}
-
-	setDistance(dist) {
-		this.distance = dist;
 	}
 }
 
