@@ -65,7 +65,7 @@ class PathGraph {
 		}
 
 		if (!oneWay) {
-			if (!this.nodes.hasOwnProperty(path1)) {
+			if (!this.nodes.hasOwnProperty(path2)) {
 				this.nodes[path2] = [];
 				this.nodes[path2].push(path1);
 			} else {
@@ -203,10 +203,10 @@ class PathGraph {
 }
 
 class PathNode {
-		constructor(x, y) {
-			this.x = x;
-			this.y = y;
-		}
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
 
 	getX() {
 		return this.x;
