@@ -146,7 +146,7 @@ class PathGraph {
 			for (var i = 0; i < unvisited.length; i++) {
 				var node = unvisited[i];
 
-				if (distance[node] < distances[current]) {
+				if (distances[node] < distances[current]) {
 					current = node;
 					currentIndex = i;
 				}
@@ -162,7 +162,7 @@ class PathGraph {
 			for (var node in adj) {
 				if (!visited.includes(node)) {
 					unvisited.push(node);
-					distances[node] = Math.min(distances[node], distance[current] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
+					distances[node] = Math.min(distances[node], distances[current] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
 				}
 			}
 
