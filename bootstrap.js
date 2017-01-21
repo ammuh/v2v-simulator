@@ -14,10 +14,12 @@ var graphEdges = [
 	[[50, 670], [50, 20]]
 ];
 
-for (var arr in stageData) {
-  stage1.addLine(arr[0], arr[1], arr[2], arr[3]);
+for (var i = 0; i < stageData.length; i++) {
+	var arr = stageData[i];
+	stage1.addLine(arr[0], arr[1], arr[2], arr[3]);
 }
 
-for (var arr in graphEdges) {
-  stage1.addPathNode(arr[0], arr[1], false);
+for (var i  = 0; i < graphEdges.length; i++) {
+	var arr = graphEdges[i];
+	stage1.addPathNode(arr[0], arr[1], false);
 }
