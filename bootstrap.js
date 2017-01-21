@@ -10,14 +10,8 @@ var stageData = [
 ];
 
 var graphEdges = [
-	[
-		[[700, 670], [50, 670]],
-		[[50, 670], [50, 20]]
-	],
-	[
-		[[50, 20], [50, 670]],
-		[[50, 670], [700, 670]]
-	]
+	[[700, 670], [50, 670]],
+	[[50, 670], [50, 20]]
 ];
 
 for (var arr in stageData) {
@@ -25,5 +19,5 @@ for (var arr in stageData) {
 }
 
 for (var arr in graphEdges) {
-  stage1.addPathNode(arr[0], arr[1], true);
+  stage1.addPathNode(arr[0], arr[1], false);
 }
