@@ -197,7 +197,7 @@ class PathGraph {
 
 					if (alt < distances[adjInd].distance) {
 						distances[adjInd].distance = alt;
-						previous.push(u);
+						previous.push({source: adj[i], previous: u});
 					}
 				}
 			}
