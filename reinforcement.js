@@ -1,1 +1,1 @@
-var brain = new deepqlearn.Brain(num_inputs, num_actions);
+var brain = new deepqlearn.Brain(5, 3);
