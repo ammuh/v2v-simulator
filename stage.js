@@ -178,7 +178,7 @@ class PathGraph {
 	findClosestNode(pt) {
 		var min = new PathNode(0, 0);
 		var minDist = Math.sqrt(Math.pow(pt[0], 2) + Math.pow(pt[1], 2));
-
+		console.log("initial min:", minDist)
 		var keys = Object.keys(this.nodes);
 		for (var i = 0; i < keys; i++) {
 			var key = keys[i];
@@ -190,7 +190,7 @@ class PathGraph {
 			var y2 = pt[1];
 
 			var dist = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-
+			console.log("dist:", dist)
 			if (dist < minDist) {
 				minDist = dist;
 				min = key;
