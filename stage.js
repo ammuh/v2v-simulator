@@ -192,9 +192,9 @@ class PathGraph {
 				if (this.edgeExists(unvisited, adj[i].getLocation())) {
 					var alt = minDist +
 						this.distance(u.source.getX(), u.source.getY(),
-									  adj[i].source.getX(), adj[i].source.getY());
+									  adj[i].getX(), adj[i].getY());
 
-					var adjInd = this.findEdge(distances, adj[i]);
+					var adjInd = this.findEdge(distances, adj[i].getLocation());
 
 					if (alt < distances[adjInd].distance) {
 						distances[adjInd] = alt;
