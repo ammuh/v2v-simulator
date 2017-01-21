@@ -16,8 +16,8 @@ class Stage {
 		return this.boundaries;
 	}
 
-	addPathNode(x1, y1, x2, y2) {
-		this.graph.addEdge([x1, y1], [x2, y2], true);
+	addPathNode(pt1, pt2) {
+		this.graph.addEdge(pt1, pt2, true);
 	}
 
 	getGraph() {
@@ -219,32 +219,6 @@ class PathGraph {
 			if (dist < minDist) {
 				minDist = dist;
 				min = node;
-			}
-		}
-
-		return min;
-
-		console.log(this.nodes)
-		var min = new PathNode(0, 0);
-		var minDist = Math.sqrt(Math.pow(pt[0], 2) + Math.pow(pt[1], 2));
-		console.log("initial min:", minDist)
-		var keys = Object.keys(this.nodes);
-		console.log(keys[0]);
-		console.log(keys.length);
-		for (var i = 0; i < keys; i++) {
-			var key = keys[i];
-
-			var x1 = key.getX();
-			var y1 = key.getY();
-
-			var x2 = pt[0];
-			var y2 = pt[1];
-
-			var dist = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-			console.log("dist:", dist)
-			if (dist < minDist) {
-				minDist = dist;
-				min = key;
 			}
 		}
 
