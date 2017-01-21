@@ -89,7 +89,9 @@ class PathGraph {
 		return min;
 	}
 
-	class PathNode {
+	
+}
+class PathNode {
 		constructor(x, y) {
 			this.x = x;
 			this.y = y;
@@ -103,4 +105,3 @@ class PathGraph {
 			return this.y;
 		}
 	}
-}

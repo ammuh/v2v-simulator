@@ -16,7 +16,7 @@ document.body.appendChild(renderer.view);
 var lpoints = stageData;
 
 // These are the graph nodes
-var gNodes = graphNodes;
+var gNodes = graphEdges;
 
 //This is a global array that stores all the lines
 var lines = [];
