@@ -9,6 +9,8 @@ function Particle(x, y, rt){
 	//Starting position
 	sprite.x = x;
 	sprite.y = y;
+	sprite.prevx;
+	sprite.prevy;
 	//Reference point for center
 	sprite.anchor.x = .5;
 	sprite.anchor.y = .5;
@@ -33,11 +35,16 @@ function Particle(x, y, rt){
 	sprite.pintY = pintY;
 	sprite.pintF = pintF;
 	sprite.state = state;
+	sprite.animate = animate;
 	sprite.driverState = driverState;
 	sprite.driver = new Worker("driver.js");
 	sprite.turn = turn;
 	sprite.accelerate = accelerate;
+	sprite.stop = stop;
 	sprite.driver.onmessage = function(pstate) {
+		if(pstate.data.brake){
+			sprite.stop();
+		}
 		sprite.accel = pstate.data.accel;
 		sprite.steer = pstate.data.steer;
 	};
@@ -59,24 +66,21 @@ function driverState(){
 }
 
 function state(){
-	if(this.steer > 0){
-		this.turn(.1);
-	}
-	if(this.steer < 0){
-		this.turn(-.1);
-	}
-	if(this.accel > 0 && this.speed < 3){
-		this.accelerate(.4);
-	}
-	if(this.accel < 0 && this.speed - 1 >= 0){
-		this.accelerate(-1);
-	}else if(this.accel < 0 && this.speed - 1 < 0){
-		this.speed = 0;
-	}
+	this.turn(this.steer);
+	this.accelerate(this.accel);
+	this.animate();
+}
 
-	//Current speed is added to the position of the particle, think velocity equation...
+function animate(){
+	this.prevx = this.x;
+	this.prevy = this.y;
 	this.x += this.speed*Math.cos(Math.PI/2 - this.rotation);
   	this.y -= this.speed*Math.sin(Math.PI/2 - this.rotation);
+}
+
+function backtrack(){
+	this.x = this.prevx;
+	this.y = this.prevy;
 }
 
 //Particle Functions
@@ -86,6 +90,11 @@ function turn(rad){
 }
 function accelerate(v){
 	this.speed += v;
+}
+function stop(){
+	this.speed = 0;
+	this.steer = 0;
+	this.accel = 0;
 }
 
 function collisionCheck(lines){

@@ -12,7 +12,6 @@ var renderer = autoDetectRenderer(720, 745, {resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
 var uiList = $("body").append("<ul></u>");
-var uiLabels = [];
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
 var lpoints = stageData;
 
@@ -23,6 +22,9 @@ var gNodes = graphEdges;
 var lines = [];
 
 var label;
+
+//Particle Array
+var particle;
 
 loader
 	.load(init);
@@ -55,8 +57,6 @@ function stageSet() {
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
 	}
-
-
 }
 
 function init(){
@@ -64,8 +64,8 @@ function init(){
 	particle = [];
 	particle.push(Particle(200, 200, gNodes[0]));
 	particle.push(Particle(300, 300, gNodes[1]));
-	uiLabels.push($( "ul" ).append( "<li></li>" ));
-	uiLabels.push($( "ul" ).append( "<li></li>" ));
+	$( "ul" ).append( "<li></li>" );
+	$( "ul" ).append( "<li></li>" );
 	var i;
 	for(i = 0; i < particle.length; i++){
 		stage.addChild(particle[i]);
@@ -88,8 +88,8 @@ function messageUpdate(lbl, part){
 	}
 	$(lbl).text(str);
 }
-//Particle Init
-var particle;
+
+
 //Game Play
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
@@ -112,6 +112,18 @@ function renderLoop(){
 	renderer.render(stage);
 }
 
+//Global Physics
+
+function boundaryCollision(){
+	for(var i = 0; i < particle.length; i++){
+		if(particle[i].collisionCheck(lpoints)){
+			particle[i].stop();
+			particle[i].backtrack();
+		}
+	}
+	return collisionPairs;
+}
+
 //This function handles the position and behaviour of the particle
 
 function gps(part){
@@ -119,6 +131,7 @@ function gps(part){
 	while(part.route[i].traveled == 1){
 		i++;
 		if(i >= part.route.length){
+			part.stop();
 			return null;
 		}
 	}
@@ -132,8 +145,22 @@ function gps(part){
 	var adj = point[0] - part.x;
 	var rad = Math.acos(adj/hyp);
 	if(point[1] > part.y){
-		return {dist : hyp, rot: Math.PI/2+rad - part.rotation}
+		var rota = (Math.PI/2)+rad - part.rotation;
+		if(rota > Math.PI){
+			return {dist : hyp, rot: rota - (2*Math.PI)}
+		}else if(rota < -Math.PI){
+			return {dist : hyp, rot: rota + (2*Math.PI)}
+		}else{
+			return {dist : hyp, rot: rota};
+		}		
 	}else{
-		return {dist : hyp, rot: Math.PI/2-rad - part.rotation};
+		var rota = (Math.PI/2)-rad - part.rotation;
+		if(rota > Math.PI){
+			return {dist : hyp, rot: rota - (2*Math.PI)}
+		}else if(rota < -Math.PI){
+			return {dist : hyp, rot: rota + (2*Math.PI)}
+		}else{
+			return {dist : hyp, rot: rota};
+		}
 	}
 }
