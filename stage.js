@@ -139,8 +139,8 @@ class PathGraph {
 	}
 
 	shortestPath(start, end) {
-		var root = this.findClosestNode(start[0], start[1]);
-		var dest = this.findClosestNode(end[0], end[1]);
+		var root = this.findClosestNode(start);
+		var dest = this.findClosestNode(end);
 
 		var res = this.breadthFirstSearch(root, dest)[1];
 
