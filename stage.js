@@ -148,9 +148,10 @@ class PathGraph {
 		var target = dest;
 		var ind = this.findEdge(res, target.getLocation());
 
-		while (ind != 1) {
+		while (ind != -1) {
 			path.unshift(target.getLocation());
 			target = res[ind].previous.source;
+			ind = this.findEdge(res, target.getLocation());
 		}
 		path.unshift(target);
 
