@@ -139,16 +139,13 @@ class PathGraph {
 	}
 
 	shortestPath(start, end) {
-		var path1 = new PathNode(start[0], start[1]);
-		var path2 = new PathNode(end[0], end[1]);
-
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
 		var res = this.breadthFirstSearch(root, dest)[1];
 
 		var path = [];
-		var target = end;
+		var target = dest;
 		var ind = this.findEdge(res, target.getLocation());
 
 		while (ind != 1) {
