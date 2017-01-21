@@ -174,6 +174,7 @@ class PathGraph {
 
 			var u = distances[minInd];
 			var uInd = this.findEdge(unvisited, u.source.getLocation());
+			console.log(unvisited);
 			var adj = unvisited[uInd].adjacent;
 			unvisited.splice(uInd, 1);
 
