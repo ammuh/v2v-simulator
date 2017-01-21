@@ -174,9 +174,9 @@ class PathGraph {
 
 			// Find next traversable node
 			for (var i = 0; i < unvisited.length; i++) {
-				var index = this.findEdge(distances, {source: unvisited[i]});
+				var index = this.findEdge(distances, unvisited[i]);
 
-				if (distances[index] < distances[currentDistInd]) {
+				if (distances[index].distance < distances[currentDistInd].distance) {
 					current = unvisited[i];
 					currentDistInd = this.findEdge(distances, current);
 					currentIndex = i;
@@ -204,7 +204,7 @@ class PathGraph {
 				if (!visitedNode) {
 					unvisited.push(node);
 					var distInd = this.findEdge(distances, [node.getX(), node.getY()]);
-					distances[distInd] = Math.min(distances[distInd], distances[currentDistInd] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
+					distances[distInd].distance = Math.min(distances[distInd].distance, distances[currentDistInd].distance + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
 				}
 			}
 
