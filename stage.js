@@ -153,7 +153,7 @@ class PathGraph {
 			target = res[ind].previous.source;
 			ind = this.findEdge(res, target.getLocation());
 		}
-		path.unshift(target);
+		path.unshift(target.getLocation());
 
 		return path;
 	}
