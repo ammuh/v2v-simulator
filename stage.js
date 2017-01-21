@@ -16,9 +16,9 @@ class Stage {
 		return this.boundaries;
 	}
 
-	addPathNode(pt1, pt2) {
+	addPathNode(pt1, pt2, oneWay) {
 		console.log("method called");
-		this.graph.addEdge(pt1, pt2, true);
+		this.graph.addEdge(pt1, pt2, oneWay);
 	}
 
 	getGraph() {
