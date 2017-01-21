@@ -1,17 +1,48 @@
-var stageData = [
-	[0, 0, 720, 0],
-	[0, 0, 0, 720],
-	[720, 0, 720, 720],
-	[0, 720, 720, 720],
-	[ 100, 0, 100, 620],
-	[ 100, 620, 720, 620]
-];
+var stages = [];
 
+class Stage {
+	constructor() {
+		this.boundaries = [];
+		this.particles = [];
+		this.graph = new PathGraph();
+	}
 
-var graphEdges = [
-	[[700, 670], [50, 670]],
-	[[50, 670], [50, 20]]
-]
+	addLine(x1, y1, x2, y2) {
+		var line = [x1, y1, x2, y2];
+		this.boundaries.push(line);
+	}
+
+	getLines() {
+		return this.boundaries;
+	}
+
+	addPathNode(x1, y1, x2, y2) {
+		this.graph.addEdge([x1, y1], [x2, y2], true);
+	}
+
+	getGraph() {
+		return this.graph;
+	}
+
+	addParticle(startX, startY, endX, endY) {
+		var particle = {
+			spawn: {
+				x: startX,
+				y: startY
+			},
+			destination: {
+				x: endX,
+				y: endY
+			}
+		};
+
+		this.particles.push(particle);
+	}
+
+	getParticles() {
+		return this.particles;
+	}
+}
 
 class PathGraph {
 	constructor() {
@@ -64,7 +95,7 @@ class PathGraph {
 		var path1 = new PathNode(start[0], start[1]);
 		var path2 = new PathNode(end[0], end[1]);
 
-
+		return [];
 	}
 
 	findClosestNode(pt) {
@@ -88,19 +119,19 @@ class PathGraph {
 
 		return min;
 	}
+}
 
-	class PathNode {
-		constructor(x, y) {
-			this.x = x;
-			this.y = y;
-		}
+class PathNode {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
 
-		getX() {
-			return this.x;
-		}
+	getX() {
+		return this.x;
+	}
 
-		getY() {
-			return this.y;
-		}
+	getY() {
+		return this.y;
 	}
 }
