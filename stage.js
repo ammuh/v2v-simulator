@@ -145,81 +145,127 @@ class PathGraph {
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
-		return [root, this.breadthFirstSearch(root, dest), dest];
+		return this.breadthFirstSearch(root, dest);
 	}
 
 	breadthFirstSearch(start, end) {
-		var unvisited = [start];
-		var visited = [];
-
-		var distances = [{
-			source: start,
-			distance: 0
-		}];
+		var unvisited = [];
+		var distances = [];
+		var previous = [];
 
 		for (var i = 0; i < this.nodes.length; i++) {
-			if (!this.edgeExists(distances, this.nodes[i].source.getLocation())) {
-				distances.push({
-					source: this.nodes[i].source,
-					distance: 1 / 0
-				});
-			}
+			unvisited.push(this.nodes[i]);
+			distances.push({
+				source: this.nodes[i].source,
+				distance: 1 / 0
+			});
 		}
 
-		var current = start;
-		var currentDistInd = 0;
+		var srcInd = this.findEdge(distances, start);
+		distances[srcInd].distance = 0;
 
-		var visitedEnd = false;
-
-		while (!visitedEnd && unvisited.length > 0) {
-			console.log("loop");
-			var currentIndex = -1;
-
-			// Find next traversable node
-			for (var i = 0; i < unvisited.length; i++) {
-				var index = this.findEdge(distances, unvisited[i].getLocation());
-
-				if (distances[index].distance < distances[currentDistInd].distance) {
-					current = unvisited[i];
-					currentDistInd = this.findEdge(distances, current);
-					currentIndex = i;
+		while (unvisited.length > 0) {
+			var minInd = 0;
+			for (var i = 1; i < distances.length; i++) {
+				if (distances[minInd].distance > distances[i].distance) {
+					minInd = i;
 				}
 			}
 
-			// Remove from unvisited list
-			if (currentIndex >= 0 && currentIndex < unvisited.length) {
-				unvisited.splice(currentIndex, 1);
-			}
+			var u = distances[minInd];
+			var uInd = this.findEdge(unvisited, u.source.getLocation());
+			var adj = unvisited[uInd].adjacent;
+			unvisited.splice(uInd, 1);
 
-			// Calculate incremental distances for adjacent nodes
-			var adj = this.getAdjacentEdges(current);
 			for (var i = 0; i < adj.length; i++) {
-				var node = adj[i];
+				if (this.edgeExists(unvisited, adj[i])) {
+					var alt = u.distance +
+						this.distance(u.source.getX(), u.source.getY(),
+									  adj[i].source.getX(), adj[i].source.getY());
 
-				var visitedNode = false;
-				for (var k = 0; k < visited.length; k++) {
-					if (visited[k].getX() == node.getX() && visited[k].getY() == node.getY()) {
-						visitedNode = true;
-						break;
+					var adjInd = this.findEdge(distances, adj[i]);
+
+					if (alt < distances[adjInd].distance) {
+						distances[adjInd] = alt;
+						previous.push(u);
 					}
 				}
-
-				if (!visitedNode) {
-					unvisited.push(node);
-					var distInd = this.findEdge(distances, [node.getX(), node.getY()]);
-					distances[distInd].distance = Math.min(distances[distInd].distance,
-						distances[currentDistInd].distance + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
-				}
 			}
-
-			// Add node to visited list
-			if (current.getX() == end.getX() && current.getY() == end.getY()) {
-				visitedEnd = true;
-			}
-			visited.push(current);
 		}
 
-		return visited;
+		return [distances, previous];
+		// var unvisited = [start];
+		// var visited = [];
+		//
+		// var distances = [{
+		// 	source: start,
+		// 	distance: 0
+		// }];
+		//
+		// for (var i = 0; i < this.nodes.length; i++) {
+		// 	if (!this.edgeExists(distances, this.nodes[i].source.getLocation())) {
+		// 		distances.push({
+		// 			source: this.nodes[i].source,
+		// 			distance: 1 / 0
+		// 		});
+		//
+		// 		unvisited.push()
+		// 	}
+		// }
+		//
+		// var current = start;
+		// var currentDistInd = 0;
+		//
+		// var visitedEnd = false;
+		//
+		// while (!visitedEnd && unvisited.length > 0) {
+		// 	console.log("loop");
+		// 	var currentIndex = -1;
+		//
+		// 	// Find next traversable node
+		// 	for (var i = 0; i < unvisited.length; i++) {
+		// 		var index = this.findEdge(distances, unvisited[i].getLocation());
+		//
+		// 		if (distances[index].distance < distances[currentDistInd].distance) {
+		// 			current = unvisited[i];
+		// 			currentDistInd = this.findEdge(distances, current);
+		// 			currentIndex = i;
+		// 		}
+		// 	}
+		//
+		// 	// Remove from unvisited list
+		// 	if (currentIndex >= 0 && currentIndex < unvisited.length) {
+		// 		unvisited.splice(currentIndex, 1);
+		// 	}
+		//
+		// 	// Calculate incremental distances for adjacent nodes
+		// 	var adj = this.getAdjacentEdges(current);
+		// 	for (var i = 0; i < adj.length; i++) {
+		// 		var node = adj[i];
+		//
+		// 		var visitedNode = false;
+		// 		for (var k = 0; k < visited.length; k++) {
+		// 			if (visited[k].getX() == node.getX() && visited[k].getY() == node.getY()) {
+		// 				visitedNode = true;
+		// 				break;
+		// 			}
+		// 		}
+		//
+		// 		if (!visitedNode) {
+		// 			var distInd = this.findEdge(distances, [node.getX(), node.getY()]);
+		// 			distances[distInd].distance = Math.min(distances[distInd].distance,
+		// 				distances[currentDistInd].distance + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
+		// 		}
+		// 	}
+		//
+		// 	// Add node to visited list
+		// 	if (current.getX() == end.getX() && current.getY() == end.getY()) {
+		// 		visitedEnd = true;
+		// 	}
+		// 	visited.push(current);
+		// }
+
+		// return visited;
 	}
 
 	findClosestNode(pt) {
