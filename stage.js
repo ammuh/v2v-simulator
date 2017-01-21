@@ -173,12 +173,14 @@ class PathGraph {
 			}
 
 			var u = unvisited[0];
+			var uInd = 0;
 			var minDist = distances[this.findEdge(distances, u.source.getLocation())].distance;
 			for (var i = 1; i < unvisited.length; i++) {
 				var d = distances[this.findEdge(distances, unvisited[i].source.getLocation())].distance;
 				if (d < minDist) {
 					minDist = d;
 					u = unvisited[i];
+					uInd = i;
 				}
 			}
 
