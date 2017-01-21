@@ -197,7 +197,7 @@ class PathGraph {
 					var adjInd = this.findEdge(distances, adj[i].getLocation());
 
 					if (alt < distances[adjInd].distance) {
-						distances[adjInd] = alt;
+						distances[adjInd].distance = alt;
 						previous.push(u);
 					}
 				}
