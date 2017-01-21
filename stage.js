@@ -172,15 +172,22 @@ class PathGraph {
 				}
 			}
 
-			var u = distances[minInd];
-			var uInd = this.findEdge(unvisited, u.source.getLocation());
-			console.log(unvisited);
-			var adj = unvisited[uInd].adjacent;
+			var u = unvisited[0];
+			var minDist = distances[this.findEdge(distances, u.source.getLocation())].distance;
+			for (var i = 1; i < unvisited.length; i++) {
+				var d = distances[this.findEdge(distances, unvisited[i].source.getLocation())].distance;
+				if (d < minDist) {
+					minDist = d;
+					u = unvisited[i];
+				}
+			}
+
+			var adj = u.adjacent;
 			unvisited.splice(uInd, 1);
 
 			for (var i = 0; i < adj.length; i++) {
 				if (this.edgeExists(unvisited, adj[i])) {
-					var alt = u.distance +
+					var alt = minDist +
 						this.distance(u.source.getX(), u.source.getY(),
 									  adj[i].source.getX(), adj[i].source.getY());
 
