@@ -1,5 +1,3 @@
-var stage1 = new Stage();
-
 var stageData = [
 	[0, 0, 720, 0],
 	[0, 0, 0, 720],
@@ -13,13 +11,3 @@ var graphEdges = [
 	[[700, 670], [50, 670]],
 	[[50, 670], [50, 20]]
 ];
-
-for (var i = 0; i < stageData.length; i++) {
-	var arr = stageData[i];
-	stage1.addLine(arr[0], arr[1], arr[2], arr[3]);
-}
-
-for (var i  = 0; i < graphEdges.length; i++) {
-	var arr = graphEdges[i];
-	stage1.addPathNode(arr[0], arr[1], false);
-}

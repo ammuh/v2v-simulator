@@ -1,7 +1,7 @@
 PIXI.loader
 	.add("img/p.png")
 
-function Particle(x, y, rt){
+function Particle(x, y, dest){
 	var sprite = new PIXI.Sprite(resources["img/p.png"].texture);
 	//Circle Diameter
 	sprite.height = 50;
@@ -21,14 +21,7 @@ function Particle(x, y, rt){
 	sprite.accel = 0;
 	sprite.steer = 0;
 	//Routing
-	sprite.route = [];
-	var i;
-	for(i = 0; i < rt.length; i++){
-		sprite.route.push({traveled: 0, point:rt[i][0]});
-		if(rt.length - 1 == i){
-			sprite.route.push({traveled: 0, point:rt[i][1]});
-		}
-	}
+	sprite.route = pg.shortestPath([x, y], dest);
 
 	sprite.collisionCheck = collisionCheck;
 	sprite.pintX = pintX;

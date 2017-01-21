@@ -23,6 +23,8 @@ var lines = [];
 
 var label;
 
+var pg;
+
 //Particle Array
 var particle;
 
@@ -44,14 +46,15 @@ function stageSet() {
 		ln.lineTo(lpoints[i][2], lpoints[i][3]);
 		lines.push(ln);
 	}
-	for(var a = 0; a < gNodes.length; a++){
-		for (var i = 0; i < gNodes[a].length; i++) {
-			var gfx = new Graphics();
-			ln.lineStyle(1, 0x2ecc71, 1);
-			ln.moveTo(gNodes[a][i][0][0], gNodes[a][i][0][1]);
-			ln.lineTo(gNodes[a][i][1][0], gNodes[a][i][1][1]);
-			stage.addChild(ln)
-		}
+
+	pg = new PathGraph();
+	for(i = 0; i < gNodes.length; i++){
+		var gfx = new Graphics();
+		ln.lineStyle(1, 0x2ecc71, 1);
+		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
+		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
+		pg.addEdge(gNodes[i][0], gNodes[i][1], false);
+		stage.addChild(ln);
 	}
 
 	for(i = 0; i < lines.length; i++){
