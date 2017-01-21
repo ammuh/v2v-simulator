@@ -20,6 +20,7 @@ for (var i = 0; i < stageData.length; i++) {
 }
 
 for (var i  = 0; i < graphEdges.length; i++) {
+	console.log("add edge!");
 	var arr = graphEdges[i];
 	stage1.addPathNode(arr[0], arr[1], false);
 }

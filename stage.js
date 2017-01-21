@@ -17,6 +17,7 @@ class Stage {
 	}
 
 	addPathNode(pt1, pt2) {
+		console.log("method called");
 		this.graph.addEdge(pt1, pt2, true);
 	}
 
@@ -54,6 +55,7 @@ class PathGraph {
 	}
 
 	addEdge(pt1, pt2, oneWay) {
+		console.log("adding");
 		var path1 = new PathNode(pt1[0], pt1[1]);
 		var path2 = new PathNode(pt2[0], pt2[1]);
 
