@@ -158,11 +158,11 @@ class PathGraph {
 		}
 		path.unshift(target.getLocation());
 
-		if (!path[0].equals(new PathNode(start[0], start[1]))) {
-			path.unshift(start);
+		if (path[0][0] == start[0] && path[0][1] == start[1]) {
+			path.splice(0, 1);
 		}
 
-		if (!path[path.length - 1].equals(new PathNode(end[0], end[1]))) {
+		if (path[path.length - 1][0] != end[0] || path[path.length - 1][1] != end[1]) {
 			path.push(end);
 		}
 
