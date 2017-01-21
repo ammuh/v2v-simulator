@@ -145,8 +145,7 @@ class PathGraph {
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
-		var res = this.breadthFirstSearch(root, dest);
-		var prev1
+		return this.breadthFirstSearch(root, dest);
 	}
 
 	breadthFirstSearch(start, end) {
