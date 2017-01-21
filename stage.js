@@ -155,6 +155,18 @@ class PathGraph {
 		}
 		path.unshift(target.getLocation());
 
+		path.unshift(start);
+		path.push(end);
+
+		for (var i = 0; i < path.length - 1; i++) {
+			for (var k = 1; k < path.length; k++) {
+				if (path[i][0] == path[k][0] && path[i][1] == path[k][1]) {
+					path.splice(k, 1);
+					k--;
+				}
+			}
+		}
+
 		return path;
 	}
 
