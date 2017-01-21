@@ -145,7 +145,8 @@ class PathGraph {
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
-		return this.breadthFirstSearch(root, dest);
+		var res = this.breadthFirstSearch(root, dest);
+		var prev1
 	}
 
 	breadthFirstSearch(start, end) {
@@ -188,7 +189,7 @@ class PathGraph {
 			unvisited.splice(uInd, 1);
 
 			for (var i = 0; i < adj.length; i++) {
-				if (this.edgeExists(unvisited, adj[i])) {
+				if (this.edgeExists(unvisited, adj[i].getLocation())) {
 					var alt = minDist +
 						this.distance(u.source.getX(), u.source.getY(),
 									  adj[i].source.getX(), adj[i].source.getY());
