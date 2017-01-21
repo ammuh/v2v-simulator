@@ -1,10 +1,7 @@
 PIXI.loader
 	.add("img/p.png")
-	.load(function(){
-		console.log(Particle());
-	});
 
-function Particle(x, y){
+function Particle(x, y, rt){
 	var sprite = new PIXI.Sprite(resources["img/p.png"].texture);
 	//Circle Diameter
 	sprite.height = 50;
@@ -24,10 +21,10 @@ function Particle(x, y){
 	//Routing
 	sprite.route = [];
 	var i;
-	for(i = 0; i < graphEdges.length; i++){
-		sprite.route.push({traveled: 0, point:graphEdges[i][0]});
-		if(graphEdges.length - 1 == i){
-			sprite.route.push({traveled: 0, point:graphEdges[i][1]});
+	for(i = 0; i < rt.length; i++){
+		sprite.route.push({traveled: 0, point:rt[i][0]});
+		if(rt.length - 1 == i){
+			sprite.route.push({traveled: 0, point:rt[i][1]});
 		}
 	}
 

@@ -41,14 +41,15 @@ function stageSet() {
 		ln.lineTo(lpoints[i][2], lpoints[i][3]);
 		lines.push(ln);
 	}
-
-  for (var i = 0; i < gNodes.length; i++) {
-    var gfx = new Graphics();
-		ln.lineStyle(1, 0x2ecc71, 1);
-		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
-		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
-    stage.addChild(ln)
-  }
+	for(var a = 0; a < gNodes.length; a++){
+		for (var i = 0; i < gNodes[a].length; i++) {
+			var gfx = new Graphics();
+			ln.lineStyle(1, 0x2ecc71, 1);
+			ln.moveTo(gNodes[a][i][0][0], gNodes[a][i][0][1]);
+			ln.lineTo(gNodes[a][i][1][0], gNodes[a][i][1][1]);
+			stage.addChild(ln)
+		}	
+	}
 
 	for(i = 0; i < lines.length; i++){
 		stage.addChild(lines[i]);
@@ -57,8 +58,13 @@ function stageSet() {
 
 function init(){
 	stageSet();
-	particle = Particle(300, 300);
-	stage.addChild(particle);
+	particle = [];
+	particle.push(Particle(200, 200, gNodes[0]));
+	particle.push(Particle(300, 300, gNodes[1]));
+	var i;
+	for(i = 0; i < particle.length; i++){
+		stage.addChild(particle[i]);
+	}
 	renderLoop();
 }
 
@@ -66,20 +72,19 @@ function init(){
 var fps = 0;
 function messageUpdate(){
 	var str = "";// = "  FPS: "+ fps;
-	str += "accel: " + particle.accel;
-	str += ", steer: " + particle.steer;
-	str += ", speed: " + (Math.round(particle.speed) + Math.round(100*(particle.speed - Math.floor(particle.speed)))/100);
-	str += ", rotation (Approx): " + Math.floor(particle.rotation/(Math.PI/6));
-	str += " \u00B7	\u03C0/6, collision: " + particle.collisionCheck(stageData);
-	if(gps(particle)){
-		str += ", distanceToPoint: " + Math.floor(gps(particle).dist);
-		str += ", rad: " + gps(particle).rot;
+	str += "accel: " + particle[0].accel;
+	str += ", steer: " + particle[0].steer;
+	str += ", speed: " + (Math.round(particle[0].speed) + Math.round(100*(particle[0].speed - Math.floor(particle[0].speed)))/100);
+	str += ", rotation (Approx): " + Math.floor(particle[0].rotation/(Math.PI/6));
+	str += " \u00B7	\u03C0/6, collision: " + particle[0].collisionCheck(stageData);
+	if(gps(particle[0])){
+		str += ", distanceToPoint: " + Math.floor(gps(particle[0]).dist);
+		str += ", rad: " + gps(particle[0]).rot;
 	}
 	label.setText(str);
 }
 //Particle Init
 var particle;
-
 //Game Play
 
 // This is the bare bones of the animation loop, it is run 60 times per second and updates the particle, stage, and checks for collisions
@@ -87,8 +92,11 @@ var then = new Date;
 function renderLoop(){
 	var now = new Date;
 	requestAnimationFrame(renderLoop);
-	particle.driverState();
-	particle.state();
+	var i;
+	for(i = 0; i < particle.length; i++){
+		particle[i].driverState();
+		particle[i].state();
+	}
 	fps = 8*Math.floor((1000 / (now - then))/8);
 	then = now;
 	messageUpdate();
@@ -96,8 +104,6 @@ function renderLoop(){
 }
 
 //This function handles the position and behaviour of the particle
-
-
 
 function gps(part){
 	var i = 0;
