@@ -145,7 +145,7 @@ class PathGraph {
 		var root = this.findClosestNode(start[0], start[1]);
 		var dest = this.findClosestNode(end[0], end[1]);
 
-		return this.breadthFirstSearch(root, dest);
+		return [root, this.breadthFirstSearch(root, dest), dest];
 	}
 
 	breadthFirstSearch(start, end) {
@@ -155,7 +155,7 @@ class PathGraph {
 		var distances = [{
 			source: start,
 			distance: 0
-		}]
+		}];
 
 		for (var i = 0; i < this.nodes.length; i++) {
 			distances.push({
@@ -170,11 +170,11 @@ class PathGraph {
 		var visitedEnd = false;
 
 		while (!visitedEnd && unvisited.length > 0) {
+			console.log("loop");
 			var currentIndex = -1;
 
 			// Find next traversable node
 			for (var i = 0; i < unvisited.length; i++) {
-				console.log(distances);
 				var index = this.findEdge(distances, unvisited[i].getLocation());
 
 				if (distances[index].distance < distances[currentDistInd].distance) {
