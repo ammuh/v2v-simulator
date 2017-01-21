@@ -159,7 +159,9 @@ class PathGraph {
 
 			// Calculate incremental distances for adjacent nodes
 			var adj = this.getAdjacentEdges(current);
-			for (var node in adj) {
+			for (var i = 0; i < adj.length; i++) {
+				var node = adj[i];
+
 				if (!visited.includes(node)) {
 					unvisited.push(node);
 					distances[node] = Math.min(distances[node], distances[current] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
@@ -178,7 +180,7 @@ class PathGraph {
 		var minDist = Math.sqrt(Math.pow(pt[0], 2) + Math.pow(pt[1], 2));
 
 		var keys = Object.keys(this.nodes);
-		for (var i; i < keys; i++) {
+		for (var i = 0; i < keys; i++) {
 			var key = keys[i];
 
 			var x1 = key.getX();
