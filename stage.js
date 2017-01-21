@@ -158,7 +158,7 @@ class PathGraph {
 		}];
 
 		for (var i = 0; i < this.nodes.length; i++) {
-			if (!this.edgeExists(distances, this.nodes[i].getLocation())) 
+			if (!this.edgeExists(distances, this.nodes[i].getLocation())) {
 				distances.push({
 					source: this.nodes[i].source,
 					distance: 1 / 0
