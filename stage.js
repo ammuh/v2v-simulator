@@ -57,7 +57,7 @@ class PathGraph {
 		var path1 = new PathNode(pt1[0], pt1[1]);
 		var path2 = new PathNode(pt2[0], pt2[1]);
 
-		var src = this.findEdge(pt1);
+		var src = this.findEdge(this.nodes, pt1);
 
 		if (src == -1) {
 			var relation = {};
@@ -71,7 +71,7 @@ class PathGraph {
 		}
 
 		if (!oneWay) {
-			src = this.findEdge(pt2);
+			src = this.findEdge(this.nodes, pt2);
 
 			if (src == -1) {
 				var relation = {};
@@ -86,9 +86,9 @@ class PathGraph {
 		}
 	}
 
-	findEdge(pt1) {
-		for (var i = 0; i < this.nodes.length; i++) {
-			var node = this.nodes[i];
+	findEdge(list, pt1) {
+		for (var i = 0; i < list.length; i++) {
+			var node = list[i];
 
 			if (node.source.getX() == pt1[0] && node.source.getY() == pt1[1]) {
 				return i;
@@ -99,11 +99,11 @@ class PathGraph {
 	}
 
 	edgeExists(pt1) {
-		return this.findEdge(pt1)  == -1 ? false : true;
+		return this.findEdge(this.nodes, pt1)  == -1 ? false : true;
 	}
 
 	removeEdge(pt1, pt2) {
-		var src = this.findEdge(pt1);
+		var src = this.findEdge(this.nodes, pt1);
 
 		if (src > -1) {
 			var adj = this.nodes[src].adjacent;
@@ -115,7 +115,7 @@ class PathGraph {
 			}
 		}
 
-		src = this.findEdge(pt2);
+		src = this.findEdge(this.nodes, pt2);
 
 		if (src > -1) {
 			var adj = this.nodes[src].adjacent;
@@ -129,7 +129,7 @@ class PathGraph {
 	}
 
 	getAdjacentEdges(node) {
-		var src = this.findEdge([node.getX(), node.getY()]);
+		var src = this.findEdge(this.nodes, [node.getX(), node.getY()]);
 
 		if (src == -1) {
 			return null;
@@ -149,27 +149,36 @@ class PathGraph {
 	}
 
 	breadthFirstSearch(start, end) {
-		var distances = {};
 		var unvisited = [start];
 		var visited = [];
 
-		distances[start] = 0;
-		var keys = Object.keys(this.nodes);
-		for (var i = 0; i < keys.length; i++) {
-			distances[node] = 1 / 0;
+		var distances = [{
+			source: start,
+			distance: 0
+		}]
+
+		for (var i = 0; i < this.nodes.length; i++) {
+			distances.push({
+				source: this.nodes[i],
+				distance: 1 / 0;
+			});
 		}
 
 		var current = start;
+		var currentDistInd = 0;
 
-		while (!visited.includes(end) && unvisited.length > 0) {
+		var visitedEnd = false;
+
+		while (!visitedEnd && unvisited.length > 0) {
 			var currentIndex = -1;
 
 			// Find next traversable node
 			for (var i = 0; i < unvisited.length; i++) {
-				var node = unvisited[i];
+				var index = this.findEdge(distances, unvisited[i]);
 
-				if (distances[node] < distances[current]) {
-					current = node;
+				if (distances[index] < distances[currentDistInd]) {
+					current = unvisited[i];
+					currentDistInd = this.findEdge(distances, current);
 					currentIndex = i;
 				}
 			}
@@ -184,13 +193,25 @@ class PathGraph {
 			for (var i = 0; i < adj.length; i++) {
 				var node = adj[i];
 
-				if (!visited.includes(node)) {
+				var visitedNode = false;
+				for (var k = 0; k < visited.length; k++) {
+					if (visited[k].getX() == node.getX() && visited[k].getY() == node.getY()) {
+						visitedNode = true;
+						break;
+					}
+				}
+
+				if (!visitedNode) {
 					unvisited.push(node);
-					distances[node] = Math.min(distances[node], distances[current] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
+					var distInd = this.findEdge(distances, [node.getX(), node.getY()]);
+					distances[] = Math.min(distances[distInd], distances[currentDistInd] + this.distance(current.getX(), current.getY(), node.getX(), node.getY()));
 				}
 			}
 
 			// Add node to visited list
+			if (current.getX() == end.getX() && current.getY() == end.getY()) {
+				visitedEnd = true;
+			}
 			visited.push(current);
 		}
 
