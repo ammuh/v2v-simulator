@@ -179,6 +179,12 @@ function gps(part){
 	}
 	var adj = point[0] - part.x;
 	var rad = Math.acos(adj/hyp);
+
+	if(part.route.length == i){
+		var dest = graphEdges[genRand(0,graphEdges-1)][genRand(0,1)];
+		part.route = shortestPath(part.route[i-1], dest);
+	}
+
 	if(point[1] > part.y){
 		var rota = (Math.PI/2)+rad - part.rotation;
 		if(rota > Math.PI){
@@ -198,6 +204,12 @@ function gps(part){
 			return {dist : hyp, rot: rota};
 		}
 	}
+}
+
+function genRand(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function isCloser(part){
