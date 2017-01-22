@@ -144,7 +144,7 @@ function pcollision(part){
 	if(part.collisionCheck(lpoints)){
 			return true;
 	}
-	for(var i = 0; j < particle.length; i++){
+	for(var i = 0;  i< particle.length; i++){
 		if(particle[i] != part && particleCollision(particle[i], part)){
 			return true;
 		}

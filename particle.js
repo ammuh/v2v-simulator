@@ -44,7 +44,8 @@ function Particle(x, y, dest){
 	sprite.stop = stop;
 	sprite.turnFib = turnFib;
 	sprite.driver.onmessage = function(pstate) {
-	
+		speedSet(pstate.data.speed);
+		turnFib(pstate.data.fiber);
 	};
 
 	sprite.driver.postMessage({header:"stage", stage: lpoints});
@@ -67,9 +68,6 @@ function driverState(){
 }
 
 function state(){
-	this.turn(this.steer);
-	this.accelerate(this.accel);
-	this.animate();
 }
 
 function animate(){
