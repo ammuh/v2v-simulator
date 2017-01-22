@@ -45,6 +45,7 @@ function Particle(x, y, dest){
 	sprite.backtrack = backtrack;
 	sprite.turnFib = turnFib;
 	sprite.speedSet = speedSet;
+	sprite.resultState = resultState;
 	sprite.driver.onmessage = function(pstate) {
 		sprite.speedSet(pstate.data.speed);
 		sprite.turnFib(pstate.data.fiber);
@@ -61,6 +62,7 @@ function driverState(){
 		f = gps(this).rot;
 	}
 	this.driver.postMessage({
+		train: null,
 		fibers:radar(this),
 		partFiber:this.fiber,
 		speed: this.speed,
@@ -69,6 +71,34 @@ function driverState(){
 		rewards:{
 			dist: isCloser(this),
 			collision: collisionRule()
+		}
+	});
+}
+
+function resultState(){
+	var i = 0;
+	while(this.route[i].traveled == 1){
+		i++;
+		if(i >= part.route.length){
+			i = -1;
+			break;
+		}
+	}
+	var dest;
+	if(i < 0){
+		dest = null;
+	}else{
+
+		dest = [this.route[i][0], this.route[i][0]];
+	}
+	this.driver.postMessage({
+		train: {
+			position: {
+				oldPosition: [this.prevx, this.prevy],
+				newPosition: [this.prevx, this.prevy],
+				destination: dest
+			},
+			hadCollision: pcollision(this)
 		}
 	});
 }

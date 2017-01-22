@@ -106,6 +106,7 @@ function renderLoop(){
 	for(i = 0; i < particle.length; i++){
 		particle[i].driverState();
 		particle[i].animate();
+		particle[i].resultState();
 		if(pcollision(particle[i])){
 			particle[i].stop();
 			particle[i].backtrack();
