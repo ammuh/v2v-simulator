@@ -107,8 +107,8 @@ function renderLoop(){
 		particle[i].driverState();
 		particle[i].animate();
 		particle[i].resultState();
-		if(pcollision(particle[i])){
-			particle[i].stop();
+		if(particle[i].collisionCheck(lpoints)){
+			particle[i].rotation *= -1;
 			particle[i].backtrack();
 		}
 		particle[i].animate();
@@ -133,13 +133,10 @@ function renderLoop(){
 function collisionRule(){
 	for(var i = 0; i < particle.length; i++){
 		if(particle[i].collisionCheck(lpoints)){
-			particle[i].stop();
 			return true;
 		}
 		for(var j = i+1; j < particle.length; j++){
 			if(particleCollision(particle[i], particle[j])){
-				particle[i].stop();
-				particle[j].stop();
 				return true;
 			}
 		}
@@ -250,7 +247,7 @@ function dof(part, zone){
 			for(var a = 0; a < fibpoints.length; a++){
 				var ps = objects[i].data;
 				if(fibpoints[a] != null){
-					if(lineIntersect(fibpoints[a][0], fibpoints[a][1] ,fibpoints[a][2] ,fibpoints[a][3], ps[0], ps[1], ps[2] ,ps[3])){
+					if(math.intersect([fibpoints[a][0], fibpoints[a][1]] ,[fibpoints[a][2] ,fibpoints[a][3]], [ps[0], ps[1]], [ps[2] ,ps[3]])){
 						fibs[a].clear = false;
 						var inter = math.intersect([fibpoints[a][0], fibpoints[a][1]], [fibpoints[a][2] ,fibpoints[a][3]], [ps[0], ps[1]], [ps[2] ,ps[3]]);
 						fibs[a].distance = Math.sqrt(Math.pow(inter[0]-fibpoints[a][0],2) + Math.pow(inter[1]-fibpoints[a][1],2));

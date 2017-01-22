@@ -79,7 +79,7 @@ function resultState(){
 	var i = 0;
 	while(this.route[i].traveled == 1){
 		i++;
-		if(i >= part.route.length){
+		if(i >= this.route.length){
 			i = -1;
 			break;
 		}
@@ -111,6 +111,18 @@ function animate(){
 	this.prevy = this.y;
 	this.x += this.speed*Math.cos(Math.PI/2 - this.rotation);
   	this.y -= this.speed*Math.sin(Math.PI/2 - this.rotation);
+	if(this.x > 720){
+		this.x = 720;
+	}
+	if(this.x < 0){
+		this.x = 0;
+	}
+	if(this.y > 720){
+		this.y = 720;
+	}
+	if(this.y < 0){
+		this.y = 0;
+	}
 }
 
 function backtrack(){
