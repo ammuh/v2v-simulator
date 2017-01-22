@@ -1,7 +1,7 @@
 // var num_inputs = 32 * 3 + 4;
 // var num_actions = 32 + 1;
-var num_inputs = 2;
-var num_actions = 2;
+// var num_inputs = 2;
+// var num_actions = 2;
 
 var temporal_window = 1;
 var network_size = num_inputs*temporal_window + num_actions*temporal_window + num_inputs;
