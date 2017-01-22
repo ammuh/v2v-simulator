@@ -150,7 +150,14 @@ function pintF(line){
 }
 
 function boverlap(a1, a2, a3, a4){
-	if((a3 <= Math.max(a1,a2) && a3 >= Math.min(a1,a2)) || (a4 <= Math.max(a1,a2) && a4 >= Math.min(a1,a2))){
+	if((a3 <= Math.max(a1,a2) && a3 >= Math.min(a1,a2)) || (a4 <= Math.max(a1,a2) && a4 >= Math.min(a1,a2)) || (a1 <= Math.max(a3,a4) && a1 >= Math.min(a3,a4))|| (a2 <= Math.max(a3,a4) && a2 >= Math.min(a3,a4))){
+		return true;
+	}
+	return false;
+}
+
+function bengulf(sup1, sup2, b1, b2){
+	if(Math.max(sup1, sup2) >= Math.max(b1, b2) && Math.min(sup1, sup2) <= Math.min(b1, b2)){
 		return true;
 	}
 	return false;
