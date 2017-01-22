@@ -4,7 +4,7 @@ var slines;
 		fibers:[
 			{
 				clear: 1,0
-				distance: 
+				distance:
 				rad:
 				speed:
 			}
@@ -22,7 +22,7 @@ var slines;
 onmessage = function(e) {
 	if(e.data.header == "stage"){
 		slines = e.data.stage;
-		console.log(slines);
+		// console.log(slines);
 	}else{
 		var s;
 		var a;
