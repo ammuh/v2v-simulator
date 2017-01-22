@@ -70,6 +70,12 @@ function init(){
 	stageSet();
 	particle = [];
 	particle.push(Particle(20, 20, [700,700]));
+	particle.push(Particle(20, 700, [450, 360]));
+	particle.push(Particle(700, 20, [30, 660]));
+	particle.push(Particle(360, 360, [450, 360]));
+	$( "ul" ).append( "<li></li>" );
+	$( "ul" ).append( "<li></li>" );
+	$( "ul" ).append( "<li></li>" );
 	$( "ul" ).append( "<li></li>" );
 	var i;
 	for(i = 0; i < particle.length; i++){

@@ -118,7 +118,15 @@ function animate(){
 	var tempy = this.y;
 	this.x += this.speed*Math.cos(Math.PI/2 - this.rotation);
   	this.y -= this.speed*Math.sin(Math.PI/2 - this.rotation);
-  	if(this.collisionCheck(lpoints)){
+  	var status = false;
+  	for(var i = 0; i < particle.length; i++){
+		if(particle[i] != this){
+			if(particleCollision(this, particle[i])){
+				status = true;
+			}
+		}
+	}
+  	if(status || this.collisionCheck(lpoints)){
   		this.boundcollision = true;
   		this.x = tempx;
   		this.y = tempy;
@@ -126,6 +134,7 @@ function animate(){
   		this.boundcollision = false;
   	}
 }
+
 
 var smemory = 2;
 function backtrack(){
