@@ -112,7 +112,7 @@ function renderLoop(){
 		messageUpdate(this, particle[i]);
 		i++;
 	});
-	if(collision()){
+	if(collisionRule()){
 		label.text = "OUCH";
 	}else{
 		label.text = "We Good";
@@ -123,13 +123,16 @@ function renderLoop(){
 
 //Global Physics
 
-function collision(){
+function collisionRule(){
 	for(var i = 0; i < particle.length; i++){
 		if(particle[i].collisionCheck(lpoints)){
+			particle[i].stop();
 			return true;
 		}
 		for(var j = i+1; j < particle.length; j++){
 			if(particleCollision(particle[i], particle[j])){
+				particle[i].stop();
+				particle[j].stop();
 				return true;
 			}
 		}
@@ -137,6 +140,17 @@ function collision(){
 	return false;
 }
 
+function pcollision(part){
+	if(part.collisionCheck(lpoints)){
+			return true;
+	}
+	for(var i = 0; j < particle.length; i++){
+		if(particle[i] != part && particleCollision(particle[i], part)){
+			return true;
+		}
+	}
+	return false;
+}
 
 //This function handles the position and behaviour of the particle
 
@@ -179,19 +193,38 @@ function gps(part){
 	}
 }
 
-function radar(){
-
+function isCloser(part){
+	if(gps(part) != null && gps(part).dist < part.prevNodeDist){
+		return true;
+	}
+	return false;
 }
 
+function closestFiber(part, r){
+	return Math.round((r + part.rotation)/fiberang);
+}
+
+
+function radar(part){
+	var zoneSize = 50;
+	return dof(part, zoneSize);
+}
+
+var fibers = 32;
+var fiberang = 2*Math.PI/fibers;
 function dof(part, zone){
-	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
-	var fibers = 32;
-	var fiberang = 2*Math.PI/fibers;
 	var fibrad = [];
 	var fibpoints = [];
+	var fibs = [];
 	for(var i = 0; i < fibers; i++){
 		fibpoints.push([part.x, part.y, part.x + ((part.width/2)+zone)*Math.cos(i*fiberang), part.y - ((part.width/2)+zone)*Math.sin(i*fiberang)]);
 		fibrad.push(i);
+		fibs.push({
+			clear: true,
+			distance: 0,
+			fib: -1,
+			speed: 0
+		});
 	}
 	var objects = objectsInZone(part, zone);
 	for(var i = 0; i < objects.length; i++){
@@ -199,8 +232,10 @@ function dof(part, zone){
 			for(var a = 0; a < fibpoints.length; a++){
 				if(2*[a] != null){
 					if(objects[i].particle.collisionCheck(fibpoints[a])){
-						fibpoints[a] = null;
-						fibrad[a] = null;
+						fibs[a].clear = false;
+						fib = part.fiber;
+						speed = part.speed;
+						fibs[a].distance = Math.sqrt(Math.pow(part.x - objects[i].particle.x) + Math.pow(part.y - objects[i].particle.y)) - part.width;
 					}
 				}
 			}
@@ -209,14 +244,15 @@ function dof(part, zone){
 				var ps = objects[i].data;
 				if(fibpoints[a] != null){
 					if(lineIntersect(fibpoints[a][0], fibpoints[a][1] ,fibpoints[a][2] ,fibpoints[a][3], ps[0], ps[1], ps[2] ,ps[3])){
-						fibpoints[a] = null;
-						fibrad[a] = null;
+						fibs[a].clear = false;
+						var inter = math.intersect([fibpoints[a][0], fibpoints[a][1]], [fibpoints[a][2] ,fibpoints[a][3]], [ps[0], ps[1]], [ps[2] ,ps[3]]);
+						fibs[a].distance = Math.sqrt(Math.pow(inter[0]-fibpoints[a][0],2) + Math.pow(inter[1]-fibpoints[a][1],2));
 					}
 				}
 			}
 		}
 	}
-	return fibrad;
+	return fibs;
 }
 
 function objectsInZone(part, zone){
@@ -322,5 +358,4 @@ function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
         }
     }
     return true;
-
 }
