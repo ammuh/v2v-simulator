@@ -4,7 +4,7 @@ var slines;
 		fibers:[
 			{
 				clear: 1,0
-				distance: 
+				distance:
 				rad:
 				speed:
 			}
@@ -39,3 +39,4 @@ onmessage = function(e) {
 	};
 	postMessage(controllerMatrix);
 }
+

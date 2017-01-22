@@ -10,8 +10,8 @@ var Container = PIXI.Container,
 //Creates window in browser 720 by 720
 var renderer = autoDetectRenderer(720, 745, {resolution: 1});
 var stage = new Container();
-document.body.appendChild(renderer.view);
-var uiList = $("body").append("<ul></u>");
+// document.body.appendChild(renderer.view);
+// var uiList = $("body").append("<ul></u>");
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
 var lpoints = stageData;
 
@@ -184,7 +184,7 @@ function gps(part){
 			return {dist : hyp, rot: rota + (2*Math.PI)}
 		}else{
 			return {dist : hyp, rot: rota};
-		}		
+		}
 	}else{
 		var rota = (Math.PI/2)-rad - part.rotation;
 		if(rota > Math.PI){
@@ -267,7 +267,7 @@ function objectsInZone(part, zone){
 				objs.push({
 					type: "particle",
 					particle: particle[i]
-				}); 
+				});
 			}
 		}
 	}
