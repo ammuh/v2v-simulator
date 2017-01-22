@@ -113,7 +113,6 @@ function renderLoop(){
 		i++;
 	});
 	if(particleCollision(particle[0], particle[1])){
-		console.log(objectsInZone(particle[0], 60));
 		label.text = "OUCH";
 	}else{
 		label.text = "We Good";
@@ -177,26 +176,44 @@ function gps(part){
 	}
 }
 
+function radar(){
+
+}
+
 function dof(part, zone){
 	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
 	var sections = Math.ceil(2*Math.PI/min_clearance);
-	var fibers = sections;
+	var fibers = 32;
+	var fibrad = [];
 	var fibpoints = [];
 	for(var i = 0; i < fibers; i++){
-		fibpoints.push([part.x, part.y, part.x-(zone+part.width)*Math.sin(i*(2*Math.PI/fibers)),part.y + (zone+part.width)*Math.cos(i*(2*Math.PI/fibers))]);
+		fibpoints.push([part.x, part.y, Math.floor(part.x+(zone+part.width)*Math.sin(i*(2*Math.PI/fibers))), Math.floor(part.y - (zone+part.width)*Math.cos(i*(2*Math.PI/fibers)))]);
+		fibrad.push(i*(2*Math.PI/fibers));
 	}
 	var objects = objectsInZone(part, zone);
 	for(var i = 0; i < objects.length; i++){
 		if(objects[i].type == "particle"){
 			for(var a = 0; a < fibpoints.length; a++){
-				if(objects[i].particle.collisionCheck(fibpoints[a])){
-					fibpoints[a] = null;
+				if(fibpoints[a] != null){
+					if(objects[i].particle.collisionCheck(fibpoints[a])){
+						fibpoints[a] = null;
+						fibrad[a] = null;
+					}
 				}
-
+			}
+		}else if(objects[i].type == "line"){
+			for(var a = 0; a < fibpoints.length; a++){
+				var ps = objects[i].data;
+				if(fibpoints[a] != null){
+					if(lineIntersect(fibpoints[a][0], fibpoints[a][1] ,fibpoints[a][2] ,fibpoints[a][3], ps[0], ps[1], ps[2] ,ps[3])){
+						fibpoints[a] = null;
+						fibrad[a] = null;
+					}
+				}
 			}
 		}
 	}
-	return fibpoints;
+	return fibrad;
 }
 
 function objectsInZone(part, zone){
@@ -241,9 +258,10 @@ function linZone(part1, line, erad){
 	part1.width += erad;
 	part1.height += erad;
 	var stat = part1.collisionCheck([line]);
+	var stat2 = bengulf(part1.x- part1.width, part1.width + part1.x, line[0], line[2]) && bengulf(part1.y - part1.width, part1.width + part1.y, line[1], line[3]);
 	part1.width -= erad;
 	part1.height -= erad;
-	return stat;
+	return stat || stat2;
 }
 
 function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
@@ -284,4 +302,5 @@ function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
         }
     }
     return true;
+
 }
