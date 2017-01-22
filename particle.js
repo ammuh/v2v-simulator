@@ -4,8 +4,8 @@ PIXI.loader
 function Particle(x, y, dest){
 	var sprite = new PIXI.Sprite(resources["img/p.png"].texture);
 	//Circle Diameter
-	sprite.height = 25;
-	sprite.width = 25;
+	sprite.height = 20;
+	sprite.width = 20;
 	//Starting position
 	sprite.x = x;
 	sprite.y = y;
@@ -54,12 +54,18 @@ function Particle(x, y, dest){
 
 function driverState(){
 	var obj = this;
+	var d = 0;
+	var f = 0;
+	if(gps(this)){
+		d = gps(this).dist;
+		f = gps(this).rot;
+	}
 	this.driver.postMessage({
 		fibers:radar(this),
 		partFiber:this.fiber,
 		speed: this.speed,
-		distToNode: gps(this).dist,
-		nodeFiber: closestFiber(this, gps(this).rot),
+		distToNode: d,
+		nodeFiber: closestFiber(this, f),
 		rewards:{
 			dist: isCloser(this),
 			collision: collisionRule()

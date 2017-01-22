@@ -10,9 +10,13 @@ var Container = PIXI.Container,
 //Creates window in browser 720 by 720
 var renderer = autoDetectRenderer(720, 745, {resolution: 1});
 var stage = new Container();
-// document.body.appendChild(renderer.view);
-// var uiList = $("body").append("<ul></u>");
+document.body.appendChild(renderer.view);
+var uiList = $("body").append("<ul></u>");
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
+
+for(var i = 0; i < stageData.length; i++){
+	stageData[i] = stageData[i][0].concat(stageData[i][1]);
+}
 var lpoints = stageData;
 
 // These are the graph nodes
@@ -49,7 +53,7 @@ function stageSet() {
 
 	pg = new PathGraph();
 	for(i = 0; i < gNodes.length; i++){
-		var gfx = new Graphics();
+		var ln = new Graphics();
 		ln.lineStyle(1, 0x2ecc71, 1);
 		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
 		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
@@ -65,9 +69,7 @@ function stageSet() {
 function init(){
 	stageSet();
 	particle = [];
-	particle.push(Particle(200, 200, gNodes[0][0]));
-	particle.push(Particle(600, 600, gNodes[1][1]));
-	$( "ul" ).append( "<li></li>" );
+	particle.push(Particle(20, 20, [700,700]));
 	$( "ul" ).append( "<li></li>" );
 	var i;
 	for(i = 0; i < particle.length; i++){
@@ -210,7 +212,7 @@ function closestFiber(part, r){
 
 
 function radar(part){
-	var zoneSize = 50;
+	var zoneSize = 30;
 	return dof(part, zoneSize);
 }
 
