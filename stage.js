@@ -52,7 +52,7 @@ class PathGraph {
 		this.nodes = [];
 	}
 
-	distance(x1, y1, x2, y2) {
+	static distance(x1, y1, x2, y2) {
 		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 	}
 
@@ -211,7 +211,7 @@ class PathGraph {
 			for (var i = 0; i < adj.length; i++) {
 				if (this.edgeExists(unvisited, adj[i].getLocation())) {
 					var alt = minDist +
-						this.distance(u.source.getX(), u.source.getY(),
+						PathGraph.distance(u.source.getX(), u.source.getY(),
 									  adj[i].getX(), adj[i].getY());
 
 					var adjInd = this.findEdge(distances, adj[i].getLocation());
@@ -229,11 +229,11 @@ class PathGraph {
 
 	findClosestNode(pt) {
 		var min = this.nodes[0].source;
-		var minDist = this.distance(min.getX(), min.getY(), pt[0], pt[1]);
+		var minDist = PathGraph.distance(min.getX(), min.getY(), pt[0], pt[1]);
 
 		for (var i = 1; i < this.nodes.length; i++) {
 			var node = this.nodes[i].source;
-			var dist = this.distance(node.getX(), node.getY(), pt[0], pt[1]);
+			var dist = PathGraph.distance(node.getX(), node.getY(), pt[0], pt[1]);
 
 			if (dist < minDist) {
 				minDist = dist;
