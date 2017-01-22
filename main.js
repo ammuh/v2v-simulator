@@ -182,19 +182,19 @@ function radar(){
 
 function dof(part, zone){
 	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
-	var sections = Math.ceil(2*Math.PI/min_clearance);
 	var fibers = 32;
+	var fiberang = 2*Math.PI/fibers;
 	var fibrad = [];
 	var fibpoints = [];
 	for(var i = 0; i < fibers; i++){
-		fibpoints.push([part.x, part.y, Math.floor(part.x+(zone+part.width)*Math.sin(i*(2*Math.PI/fibers))), Math.floor(part.y - (zone+part.width)*Math.cos(i*(2*Math.PI/fibers)))]);
-		fibrad.push(i*(2*Math.PI/fibers));
+		fibpoints.push([part.x, part.y, part.x + ((part.width/2)+zone)*Math.cos(i*fiberang), part.y - ((part.width/2)+zone)*Math.sin(i*fiberang)]);
+		fibrad.push(i);
 	}
 	var objects = objectsInZone(part, zone);
 	for(var i = 0; i < objects.length; i++){
 		if(objects[i].type == "particle"){
 			for(var a = 0; a < fibpoints.length; a++){
-				if(fibpoints[a] != null){
+				if(2*[a] != null){
 					if(objects[i].particle.collisionCheck(fibpoints[a])){
 						fibpoints[a] = null;
 						fibrad[a] = null;
@@ -255,23 +255,32 @@ function pinZone(part1, part2, erad){
 }
 
 function linZone(part1, line, erad){
-	part1.width += erad;
-	part1.height += erad;
+	part1.width += 2*erad;
+	part1.height += 2*erad;
 	var stat = part1.collisionCheck([line]);
 	var stat2 = bengulf(part1.x- part1.width, part1.width + part1.x, line[0], line[2]) && bengulf(part1.y - part1.width, part1.width + part1.y, line[1], line[3]);
-	part1.width -= erad;
-	part1.height -= erad;
+	part1.width -= 2*erad;
+	part1.height -= 2*erad;
 	return stat || stat2;
 }
 
 function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
-	if(y2 ==0 && y1 == 0 &&y3 == 0 && y4 ==0){
+	x1 = Math.round(x1);
+	x2 = Math.round(x2);
+	x3 = Math.round(x3);
+	x4 = Math.round(x4);
+	y1 = Math.round(y1);
+	y2 = Math.round(y2);
+	y3 = Math.round(y3);
+	y4 = Math.round(y4);
+	
+	if(y2 - y1 == 0 && y3 - y4 ==0){
 		return boverlap(y1, y2, y3, y4);
-	}else if(x2 ==0 && x1 == 0 && x3 == 0 && x4 ==0){
+	}else if(x2 - x1 == 0 && x3 - x4 ==0){
 		return boverlap(x1, x2, x3, x4);
-	}else if(x2 ==0 && x1 == 0){
+	}else if(x2 - x1 == 0){
 		return boverlap((y4-y3)/(x4-x3)*(x1-x3)+y3, (y4-y3)/(x4-x3)*(x1-x3)+y3, y3, y4);
-	}else if(x3 ==0 && x4 == 0){
+	}else if(x3 - x4 == 0){
 		return boverlap((y2-y1)/(x2-x1)*(x3-x1)+y1, (y2-y1)/(x2-x1)*(x3-x1)+y1, y1, y2);
 	}
 
