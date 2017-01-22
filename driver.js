@@ -9,10 +9,14 @@ var slines;
 				speed:
 			}
 		],
-		rad:
+		partFiber:
 		speed:
 		distToNode:
-		radToNode:
+		nodeFiber:
+		rewards:{
+			dist:
+			collision:
+		}
 	}
 */
 onmessage = function(e) {
