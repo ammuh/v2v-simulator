@@ -179,8 +179,9 @@ function gps(part){
 	}
 }
 
-function radar(){
-
+function radar(part){
+	var zoneSize = 50;
+	dof(part, 50);
 }
 
 function dof(part, zone){
@@ -189,9 +190,16 @@ function dof(part, zone){
 	var fiberang = 2*Math.PI/fibers;
 	var fibrad = [];
 	var fibpoints = [];
+	var fibs = [];
 	for(var i = 0; i < fibers; i++){
 		fibpoints.push([part.x, part.y, part.x + ((part.width/2)+zone)*Math.cos(i*fiberang), part.y - ((part.width/2)+zone)*Math.sin(i*fiberang)]);
 		fibrad.push(i);
+		fibs.push({
+			clear: true,
+			distance: 0,
+			fib: -1,
+			speed: 0
+		});
 	}
 	var objects = objectsInZone(part, zone);
 	for(var i = 0; i < objects.length; i++){
@@ -199,8 +207,10 @@ function dof(part, zone){
 			for(var a = 0; a < fibpoints.length; a++){
 				if(2*[a] != null){
 					if(objects[i].particle.collisionCheck(fibpoints[a])){
-						fibpoints[a] = null;
-						fibrad[a] = null;
+						fibs[a].clear = false;
+						fib = part.fiber;
+						speed = part.speed;
+						fibs[a].distance = Math.sqrt(Math.pow(part.x - objects[i].particle.x) + Math.pow(part.y - objects[i].particle.y)) - part.width;
 					}
 				}
 			}
@@ -209,14 +219,15 @@ function dof(part, zone){
 				var ps = objects[i].data;
 				if(fibpoints[a] != null){
 					if(lineIntersect(fibpoints[a][0], fibpoints[a][1] ,fibpoints[a][2] ,fibpoints[a][3], ps[0], ps[1], ps[2] ,ps[3])){
-						fibpoints[a] = null;
-						fibrad[a] = null;
+						fibs[a].clear = false;
+						var inter = math.intersect([fibpoints[a][0], fibpoints[a][1]], [fibpoints[a][2] ,fibpoints[a][3]], [ps[0], ps[1]], [ps[2] ,ps[3]]);
+						fibs[a].distance = Math.sqrt(Math.pow(inter[0]-fibpoints[a][0],2) + Math.pow(inter[1]-fibpoints[a][1],2));
 					}
 				}
 			}
 		}
 	}
-	return fibrad;
+	return fibs;
 }
 
 function objectsInZone(part, zone){
@@ -322,5 +333,4 @@ function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
         }
     }
     return true;
-
 }

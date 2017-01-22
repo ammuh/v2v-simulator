@@ -17,6 +17,7 @@ function Particle(x, y, dest){
 	//Important Driving Variables
 	sprite.speed = 0;
 	sprite.rotation = 0;
+	sprite.fiber = 0;
 	//Particle States
 	sprite.accel = 0;
 	sprite.steer = 0;
