@@ -170,7 +170,7 @@ function gps(part){
 	var point = part.route[i].point;
 
 	var hyp = Math.sqrt(Math.pow(part.x - point[0], 2) + Math.pow(part.y - point[1], 2));
-	if(hyp < 30){
+	if(hyp < 20){
 		part.route[i].traveled = 1;
 		return null;
 	}
