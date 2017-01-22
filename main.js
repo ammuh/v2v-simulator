@@ -273,15 +273,23 @@ function lineIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
 	y2 = Math.round(y2);
 	y3 = Math.round(y3);
 	y4 = Math.round(y4);
-	
-	if(y2 - y1 == 0 && y3 - y4 ==0){
-		return boverlap(y1, y2, y3, y4);
-	}else if(x2 - x1 == 0 && x3 - x4 ==0){
+
+	if(y2 - y1 == 0 && y3 - y4 ==0 && y3 == y1){
 		return boverlap(x1, x2, x3, x4);
+	}else if(x2 - x1 == 0 && x3 - x4 ==0 && x1 == x3){
+		return boverlap(y1, y2, y3, y4);
 	}else if(x2 - x1 == 0){
-		return boverlap((y4-y3)/(x4-x3)*(x1-x3)+y3, (y4-y3)/(x4-x3)*(x1-x3)+y3, y3, y4);
+		if(y3 - y4 != 0){
+			return boverlap((y4-y3)/(x4-x3)*(x1-x3)+y3, (y4-y3)/(x4-x3)*(x1-x3)+y3, y3, y4);
+		}else{
+			return boverlap(x1, x1, x3, x4);
+		}
 	}else if(x3 - x4 == 0){
-		return boverlap((y2-y1)/(x2-x1)*(x3-x1)+y1, (y2-y1)/(x2-x1)*(x3-x1)+y1, y1, y2);
+		if(y1 - y2 != 0){
+			return boverlap((y2-y1)/(x2-x1)*(x3-x1)+y1, (y2-y1)/(x2-x1)*(x3-x1)+y1, y1, y2);
+		}else{
+			return boverlap(x3, x3, x1, x2);
+		}
 	}
 
     var x=((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));

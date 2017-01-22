@@ -1,4 +1,20 @@
 var slines;
+/*
+	e.data = {
+		fibers:[
+			{
+				clear: 1,0
+				distance: 
+				rad:
+				speed:
+			}
+		],
+		rad:
+		speed:
+		distToNode:
+		radToNode:
+	}
+*/
 onmessage = function(e) {
 	if(e.data.header == "stage"){
 		slines = e.data.stage;
