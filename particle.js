@@ -30,7 +30,7 @@ function Particle(x, y, dest){
 			point: rt[i]
 		});
 	}
-
+	sprite.prevNodeDist = 1/0;
 	sprite.collisionCheck = collisionCheck;
 	sprite.pintX = pintX;
 	sprite.pintY = pintY;
@@ -42,12 +42,9 @@ function Particle(x, y, dest){
 	sprite.turn = turn;
 	sprite.accelerate = accelerate;
 	sprite.stop = stop;
+	sprite.turnFib = turnFib;
 	sprite.driver.onmessage = function(pstate) {
-		if(pstate.data.brake){
-			sprite.stop();
-		}
-		sprite.accel = pstate.data.accel;
-		sprite.steer = pstate.data.steer;
+	
 	};
 
 	sprite.driver.postMessage({header:"stage", stage: lpoints});
@@ -57,12 +54,15 @@ function Particle(x, y, dest){
 function driverState(){
 	var obj = this;
 	this.driver.postMessage({
-		header:"partdata",
-		x: this.x,
-		y: this.y,
-		rad: this.rotation,
+		fibers:radar(this),
+		partFiber:this.fiber,
 		speed: this.speed,
-		gps: gps(obj)
+		distToNode: gps(this).dist,
+		nodeFiber: closestFiber(this, gps(this).rot),
+		rewards:{
+			dist: isCloser(this),
+			collision: collisionRule()
+		}
 	});
 }
 
@@ -96,6 +96,20 @@ function stop(){
 	this.speed = 0;
 	this.steer = 0;
 	this.accel = 0;
+}
+function turnFib(f){
+	this.fiber = f;
+	this.rotation = f*fiberang;
+}
+var SPEEDLIMIT = 4;
+function speedSet(s){
+	if(s > SPEEDLIMIT){
+		this.speed = SPEEDLIMIT;
+	}else if(s < 0){
+		this.speed = 0;
+	}else{
+		this.speed = s;
+	}
 }
 
 function collisionCheck(lines){

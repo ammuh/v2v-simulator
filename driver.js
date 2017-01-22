@@ -58,9 +58,8 @@ onmessage = function(e) {
 			}
 		}
 		var controllerMatrix = {
-			accel: a,
-			steer: s,
-			brake: b
+			speed: a,
+			fiber: s
 		};
 		postMessage(controllerMatrix);
 	}

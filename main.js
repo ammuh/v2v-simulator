@@ -112,7 +112,7 @@ function renderLoop(){
 		messageUpdate(this, particle[i]);
 		i++;
 	});
-	if(collision()){
+	if(collisionRule()){
 		label.text = "OUCH";
 	}else{
 		label.text = "We Good";
@@ -123,13 +123,16 @@ function renderLoop(){
 
 //Global Physics
 
-function collision(){
+function collisionRule(){
 	for(var i = 0; i < particle.length; i++){
 		if(particle[i].collisionCheck(lpoints)){
+			particle[i].stop();
 			return true;
 		}
 		for(var j = i+1; j < particle.length; j++){
 			if(particleCollision(particle[i], particle[j])){
+				particle[i].stop();
+				particle[j].stop();
 				return true;
 			}
 		}
@@ -137,6 +140,17 @@ function collision(){
 	return false;
 }
 
+function pcollision(part){
+	if(part.collisionCheck(lpoints)){
+			return true;
+	}
+	for(var i = 0; j < particle.length; i++){
+		if(particle[i] != part && particleCollision(particle[i], part)){
+			return true;
+		}
+	}
+	return false;
+}
 
 //This function handles the position and behaviour of the particle
 
@@ -179,15 +193,26 @@ function gps(part){
 	}
 }
 
-function radar(part){
-	var zoneSize = 50;
-	dof(part, 50);
+function isCloser(part){
+	if(gps(part) != null && gps(part).dist < part.prevNodeDist){
+		return true;
+	}
+	return false;
 }
 
+function closestFiber(part, r){
+	return Math.round((r + part.rotation)/fiberang);
+}
+
+
+function radar(part){
+	var zoneSize = 50;
+	return dof(part, zoneSize);
+}
+
+var fibers = 32;
+var fiberang = 2*Math.PI/fibers;
 function dof(part, zone){
-	var min_clearance = 2*Math.asin(part.width/(2*zone+part.width/2));
-	var fibers = 32;
-	var fiberang = 2*Math.PI/fibers;
 	var fibrad = [];
 	var fibpoints = [];
 	var fibs = [];
