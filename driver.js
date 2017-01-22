@@ -20,47 +20,21 @@ var slines;
 	}
 */
 onmessage = function(e) {
-	if(e.data.header == "stage"){
-		slines = e.data.stage;
-		// console.log(slines);
-	}else{
-		var s;
-		var a;
-		var b = 0;
-		if(e.data.gps == null){
-			a = 0;
-			s = 0;
-			b = 1;
-		}else{
-			if(e.data.gps.dist > 30){
-				if(e.data.speed >= 4){
-					a = 0;
-				}else{
-					a = .4;
-				}
-			}else{
-				b =1;
-				a = 0;
-				s = 0;
-			}
-			if(e.data.gps.rot > .3){
-				s = .1;
-				b = 1;
-			}else if(e.data.gps.rot > 0){
-				s = .1;
-			}else if(e.data.gps.rot < -.3){
-				s = -.1;
-				b = 1;
-			}else if(e.data.gps.rot < 0){
-				s = -.1;
-			}else{
-				s = 0;
+	var fib = e.data.partFiber;
+	var s= 0;
+	if(e.data.partFiber == 0){
+		for(var i = 0; i < e.data.fibers.length; i++){
+			if(e.data.fibers[i].clear == true){
+				fib = i;
+				s = 2;
+				break;
 			}
 		}
-		var controllerMatrix = {
-			speed: a,
-			fiber: s
-		};
-		postMessage(controllerMatrix);
 	}
+	var controllerMatrix = {
+		speed: s,
+		fiber: fib
+	};
+	postMessage(controllerMatrix);
 }
+

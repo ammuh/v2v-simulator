@@ -4,8 +4,8 @@ PIXI.loader
 function Particle(x, y, dest){
 	var sprite = new PIXI.Sprite(resources["img/p.png"].texture);
 	//Circle Diameter
-	sprite.height = 50;
-	sprite.width = 50;
+	sprite.height = 20;
+	sprite.width = 20;
 	//Starting position
 	sprite.x = x;
 	sprite.y = y;
@@ -42,23 +42,30 @@ function Particle(x, y, dest){
 	sprite.turn = turn;
 	sprite.accelerate = accelerate;
 	sprite.stop = stop;
+	sprite.backtrack = backtrack;
 	sprite.turnFib = turnFib;
+	sprite.speedSet = speedSet;
 	sprite.driver.onmessage = function(pstate) {
-	
+		sprite.speedSet(pstate.data.speed);
+		sprite.turnFib(pstate.data.fiber);
 	};
-
-	sprite.driver.postMessage({header:"stage", stage: lpoints});
 	return sprite;
 }
 
 function driverState(){
 	var obj = this;
+	var d = 0;
+	var f = 0;
+	if(gps(this)){
+		d = gps(this).dist;
+		f = gps(this).rot;
+	}
 	this.driver.postMessage({
 		fibers:radar(this),
 		partFiber:this.fiber,
 		speed: this.speed,
-		distToNode: gps(this).dist,
-		nodeFiber: closestFiber(this, gps(this).rot),
+		distToNode: d,
+		nodeFiber: closestFiber(this, f),
 		rewards:{
 			dist: isCloser(this),
 			collision: collisionRule()
@@ -67,9 +74,6 @@ function driverState(){
 }
 
 function state(){
-	this.turn(this.steer);
-	this.accelerate(this.accel);
-	this.animate();
 }
 
 function animate(){
@@ -94,12 +98,11 @@ function accelerate(v){
 }
 function stop(){
 	this.speed = 0;
-	this.steer = 0;
-	this.accel = 0;
 }
 function turnFib(f){
 	this.fiber = f;
 	this.rotation = f*fiberang;
+	this.rotation %= 2*Math.PI;
 }
 var SPEEDLIMIT = 4;
 function speedSet(s){
