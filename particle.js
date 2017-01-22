@@ -49,7 +49,6 @@ function Particle(x, y, dest){
 	sprite.driver.onmessage = function(pstate) {
 		sprite.speedSet(pstate.data.speed);
 		sprite.turnFib(pstate.data.fiber);
-		sprite.resultState();
 	};
 	return sprite;
 }
