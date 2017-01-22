@@ -224,7 +224,7 @@ function objectsInZone(part, zone){
 				objs.push({
 					type: "particle",
 					particle: particle[i]
-				});
+				}); 
 			}
 		}
 	}
