@@ -103,7 +103,12 @@ function renderLoop(){
 	var i;
 	for(i = 0; i < particle.length; i++){
 		particle[i].driverState();
-		particle[i].state();
+		particle[i].animate();
+		if(pcollision(particle[i])){
+			particle[i].stop();
+			particle[i].backtrack();
+		}
+		particle[i].animate();
 	}
 	fps = 8*Math.floor((1000 / (now - then))/8);
 	then = now;
@@ -117,7 +122,6 @@ function renderLoop(){
 	}else{
 		label.text = "We Good";
 	}
-	
 	renderer.render(stage);
 }
 
