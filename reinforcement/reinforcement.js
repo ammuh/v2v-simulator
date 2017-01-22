@@ -63,7 +63,6 @@ function calcReward(positions, hadCollision) {
     } else if (newDistance < oldDistance) {
         reward = 1;
     }
-
     return reward;
 }
 

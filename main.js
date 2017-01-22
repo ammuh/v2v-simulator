@@ -86,7 +86,7 @@ function messageUpdate(lbl, part){
 	str += ", steer: " + part.steer;
 	str += ", speed: " + (Math.round(part.speed) + Math.round(100*(part.speed - Math.floor(part.speed)))/100);
 	str += ", rotation (Approx): " + Math.floor(part.rotation/(Math.PI/6));
-	str += " \u00B7	\u03C0/6, collision: " + part.collisionCheck(stageData);
+	str += " \u00B7	\u03C0/6, collision: " + part.boundcollision;
 	if(gps(part)){
 		str += ", distanceToPoint: " + Math.floor(gps(part).dist);
 		str += ", rad: " + gps(part).rot;
@@ -107,11 +107,6 @@ function renderLoop(){
 		particle[i].driverState();
 		particle[i].animate();
 		particle[i].resultState();
-		if(particle[i].collisionCheck(lpoints)){
-			particle[i].rotation *= -1;
-			particle[i].backtrack();
-		}
-		particle[i].animate();
 	}
 	fps = 8*Math.floor((1000 / (now - then))/8);
 	then = now;
@@ -132,9 +127,6 @@ function renderLoop(){
 
 function collisionRule(){
 	for(var i = 0; i < particle.length; i++){
-		if(particle[i].collisionCheck(lpoints)){
-			return true;
-		}
 		for(var j = i+1; j < particle.length; j++){
 			if(particleCollision(particle[i], particle[j])){
 				return true;
@@ -170,7 +162,7 @@ function gps(part){
 	var point = part.route[i].point;
 
 	var hyp = Math.sqrt(Math.pow(part.x - point[0], 2) + Math.pow(part.y - point[1], 2));
-	if(hyp < 30){
+	if(hyp < 20){
 		part.route[i].traveled = 1;
 		return null;
 	}

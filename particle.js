@@ -10,6 +10,8 @@ function Particle(x, y, dest){
 	sprite.x = x;
 	sprite.y = y;
 	sprite.prevx;
+	sprite.xstack = [];
+	sprite.ystack = [];
 	sprite.prevy;
 	//Reference point for center
 	sprite.anchor.x = .5;
@@ -30,6 +32,7 @@ function Particle(x, y, dest){
 			point: rt[i]
 		});
 	}
+	sprite.boundcollision = false;
 	sprite.prevNodeDist = 1/0;
 	sprite.collisionCheck = collisionCheck;
 	sprite.pintX = pintX;
@@ -98,7 +101,7 @@ function resultState(){
 				newPosition: [this.prevx, this.prevy],
 				destination: dest
 			},
-			hadCollision: pcollision(this)
+			hadCollision: this.boundcollision
 		}
 	});
 }
@@ -107,27 +110,33 @@ function state(){
 }
 
 function animate(){
-	this.prevx = this.x;
-	this.prevy = this.y;
+	if(this.xstack.length <= smemory && this.ystack.length <= smemory){
+		this.xstack.push(this.x);
+		this.ystack.push(this.y);
+	}
+	var tempx = this.x;
+	var tempy = this.y;
 	this.x += this.speed*Math.cos(Math.PI/2 - this.rotation);
   	this.y -= this.speed*Math.sin(Math.PI/2 - this.rotation);
-	if(this.x > 720){
-		this.x = 720;
-	}
-	if(this.x < 0){
-		this.x = 0;
-	}
-	if(this.y > 720){
-		this.y = 720;
-	}
-	if(this.y < 0){
-		this.y = 0;
-	}
+  	if(this.collisionCheck(lpoints)){
+  		this.boundcollision = true;
+  		this.x = tempx;
+  		this.y = tempy;
+  	}else{
+  		this.boundcollision = false;
+  	}
 }
 
+var smemory = 2;
 function backtrack(){
-	this.x = this.prevx;
-	this.y = this.prevy;
+	var xpop = this.xstack.pop();
+	var ypop = this.xstack.pop();
+	if(xpop != undefined && ypop != undefined){
+		this.x =xpop;
+		this.y = ypop;
+		return true;
+	}
+	return false;
 }
 
 //Particle Functions
