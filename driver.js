@@ -102,7 +102,7 @@ function calcReward(position, hadCollision) {
 	var reward = 0;
 
 	if (hadCollision) {
-		reward -= 2;
+		reward -= 3;
 	}
 
 	var oldPosition = position.oldPosition;
@@ -113,13 +113,13 @@ function calcReward(position, hadCollision) {
 	var newDistance = PathGraph.distance(newPosition[0], newPosition[1], destination[0], destination[1]);
 
 	if (oldDistance < newDistance) {
-		reward -= 1;
+		reward -= 3;
 	} else if (newDistance < oldDistance) {
 		reward += 1;
 	}
 
 	if (newDistance < 20) {
-		reward += 2;
+		reward += 3;
 	}
 
 	return reward;
