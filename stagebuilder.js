@@ -27,8 +27,9 @@ graphics.drawRect(0, 0, width, height);
 
 stage.addChild(graphics);
 
-var gridInc = 10;
+var gridInc = 20;
 var gridColor = 0x696969;
+var gridLines = [];
 function buildGrid(){
     for(var i = 0; i <= width; i+= gridInc){
         var graphic = new Graphics();
@@ -36,6 +37,7 @@ function buildGrid(){
         graphic.moveTo(i,0);
         graphic.lineTo(i, height);
         stage.addChild(graphic);
+        gridLines.push(graphic);
     }
     for(var i = 0; i <= height; i+= gridInc){
         var graphic = new Graphics();
@@ -43,8 +45,14 @@ function buildGrid(){
         graphic.moveTo(0,i);
         graphic.lineTo(width, i);
         stage.addChild(graphic);
+        gridLines.push(graphic);
     }
     renderer.render(stage);
+}
+function destroyGrid(){
+    for(var i = 0; i < gridLines.length; i++){
+        gridLines[i].destroy();
+    }
 }
 
 stage
@@ -53,33 +61,79 @@ stage
     .on('mouseupoutside', onButtonUp)
     .on('touchstart', onButtonDown)
     .on('touchend', onButtonUp)
-    .on('touchendoutside', onButtonUp);
+    .on('touchendoutside', onButtonUp)
+    .on('mousemove', updateGuide);
+
+document.onkeydown = keys;
 
 renderer.render(stage);
 buildGrid();
-var init;
-var final;
-function onButtonDown(e){
-    console.log(e);
 
-    init = [gridInc*Math.round(e.data.originalEvent.x/gridInc), gridInc*Math.round(e.data.originalEvent.y/gridInc)];
-    console.log(e.data.originalEvent.x + ", "+e.data.originalEvent.y);
+var init;
+var guide;
+
+var ptgfx = [];
+var points = [];
+function onButtonDown(e){
+    
+    init = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
+    guide = new Graphics();
+ 
+    // begin a green fill..
+    guide.lineStyle(1, 0xFF0000, 1);
+    // draw a triangle using lines
+    guide.moveTo(init[0],init[1]);
+    guide.lineTo(init[0],init[1]);
+    // add it the stage so we see it on our screens..
+    stage.addChild(guide);
+    renderer.render(stage);
 }
 
 function onButtonUp(e){
-    console.log(e);
-	console.log(e.data.originalEvent.x + ", "+ e.data.originalEvent.y);
     var graphic = new Graphics();
  
     // begin a green fill..
     graphic.lineStyle(1, 0xFFFFFF, 1);
     // draw a triangle using lines
     graphic.moveTo(init[0],init[1]);
-    graphic.lineTo(gridInc*Math.round(e.data.originalEvent.x/gridInc), gridInc*Math.round(e.data.originalEvent.y/gridInc));
-     
-    // end the fill
-     
-    // add it the stage so we see it on our screens..
-    stage.addChild(graphic);
+    fin = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
+    
+    if(fin[0] != init[0] || fin[1] != init[1]){
+        points.push([[init[0],init[1]],[fin[0], fin[1]]]);
+        ptgfx.push(graphic);
+        graphic.lineTo(fin[0], fin[1]);
+        stage.addChild(graphic);
+    }
+    else{
+        graphic.destroy();
+    }
+    guide.destroy();
+    guide = undefined;
+    renderer.render(stage);
+}
+function updateGuide(e){
+    if(guide != undefined){
+        guide.destroy();
+        guide = new Graphics();
+        guide.lineStyle(1, 0xFF0000, 1);
+        // draw a triangle using lines
+        guide.moveTo(init[0],init[1]);
+        guide.lineTo(gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc)));
+        // add it the stage so we see it on our screens..
+        stage.addChild(guide);
+        renderer.render(stage);
+    }
+}
+
+function keys(ev){
+    var evtobj = window.event? event : ev
+    if (evtobj.keyCode == 90 && evtobj.ctrlKey){
+        undo();
+    }
+}
+
+function undo(){
+    points.pop();
+    ptgfx.pop().destroy();
     renderer.render(stage);
 }
