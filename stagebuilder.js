@@ -75,6 +75,10 @@ var guide;
 
 var ptgfx = [];
 var points = [];
+
+var ndgfx = [];
+var ndptgfx = [];
+var nodes = [];
 function onButtonDown(e){
     
     init = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
@@ -98,14 +102,35 @@ function onButtonUp(e){
     var graphic = new Graphics();
  
     // begin a green fill..
-    graphic.lineStyle(1, 0xFFFFFF, 1);
-    // draw a triangle using lines
+    if(!nm){
+        graphic.lineStyle(1, 0xFFFFFF, 1);
+    }else{
+        graphic.lineStyle(1, 0x0000FF, 1);
+    }
     graphic.moveTo(init[0],init[1]);
     fin = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
     
     if(fin[0] != init[0] || fin[1] != init[1]){
-        points.push([[init[0],init[1]],[fin[0], fin[1]]]);
-        ptgfx.push(graphic);
+        if(!nm){
+            points.push([[init[0],init[1]],[fin[0], fin[1]]]);
+            ptgfx.push(graphic);
+        }else{
+            nodes.push([[init[0],init[1]],[fin[0], fin[1]]]);
+            ndgfx.push(graphic);
+            var pt1 = new PIXI.Graphics();
+            pt1.beginFill(0x0000FF); 
+            pt1.drawCircle(init[0],init[1], 3); // drawCircle(x, y, radius)
+            pt1.endFill();
+            var pt2 = new PIXI.Graphics();
+            pt2.beginFill(0x0000FF); 
+            pt2.drawCircle(fin[0],fin[1], 3); // drawCircle(x, y, radius)
+            pt2.endFill();
+            ndptgfx.push(pt1);
+            ndptgfx.push(pt2);
+            stage.addChild(pt1);
+            stage.addChild(pt2);
+        }
+        
         graphic.lineTo(fin[0], fin[1]);
         stage.addChild(graphic);
     }
@@ -147,7 +172,15 @@ function keys(ev){
 }
 
 function undo(){
-    points.pop();
-    ptgfx.pop().destroy();
-    renderer.render(stage);
+    if(!nm){
+        points.pop();
+        ptgfx.pop().destroy();
+        renderer.render(stage);
+    }else{
+        nodes.pop();
+        ndgfx.pop().destroy();
+        ndptgfx.pop().destroy();
+        ndptgfx.pop().destroy();
+        renderer.render(stage);
+    }
 }
