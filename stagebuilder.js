@@ -69,6 +69,7 @@ document.onkeydown = keys;
 renderer.render(stage);
 buildGrid();
 
+var nm = false;
 var init;
 var guide;
 
@@ -79,8 +80,12 @@ function onButtonDown(e){
     init = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
     guide = new Graphics();
  
-    // begin a green fill..
-    guide.lineStyle(1, 0xFF0000, 1);
+    if(!nm){
+        guide.lineStyle(1, 0xFF0000, 1);
+    }else{
+        guide.lineStyle(1, 0x00FF00, 1);
+    }
+    
     // draw a triangle using lines
     guide.moveTo(init[0],init[1]);
     guide.lineTo(init[0],init[1]);
@@ -115,7 +120,12 @@ function updateGuide(e){
     if(guide != undefined){
         guide.destroy();
         guide = new Graphics();
-        guide.lineStyle(1, 0xFF0000, 1);
+
+        if(!nm){
+            guide.lineStyle(1, 0xFF0000, 1);
+        }else{
+            guide.lineStyle(1, 0x00FF00, 1);
+        }
         // draw a triangle using lines
         guide.moveTo(init[0],init[1]);
         guide.lineTo(gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc)));
@@ -129,6 +139,10 @@ function keys(ev){
     var evtobj = window.event? event : ev
     if (evtobj.keyCode == 90 && evtobj.ctrlKey){
         undo();
+    }else if(evtobj.keyCode == 78){
+        console.log("Node Mode");
+        nm = !nm;
+        console.log(nm);
     }
 }
 
