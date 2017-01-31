@@ -102,49 +102,61 @@ function onButtonDown(e){
 }
 
 function onButtonUp(e){
-    var graphic = new Graphics();
- 
-    // begin a green fill..
-    if(!nm){
-        graphic.lineStyle(1, 0xFFFFFF, 1);
-    }else{
-        graphic.lineStyle(1, 0x0000FF, 1);
-    }
-    graphic.moveTo(init[0],init[1]);
+    
     fin = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
     
     if(fin[0] != init[0] || fin[1] != init[1]){
         if(!nm){
+            var graphic = new Graphics();
+            graphic.lineStyle(1, 0xFFFFFF, 1);
+            graphic.moveTo(init[0],init[1]);
             points.push([[init[0],init[1]],[fin[0], fin[1]]]);
             ptgfx.push(graphic);
-        }else{
-            var edinc = math.distance([init[0],init[1]],[fin[0], fin[1]]);
-            nodes.push([[init[0],init[1]],[fin[0], fin[1]]]);
-            ndgfx.push(graphic);
-            var pt1 = new PIXI.Graphics();
-            pt1.beginFill(0x0000FF); 
-            pt1.drawCircle(init[0],init[1], 3); // drawCircle(x, y, radius)
-            pt1.endFill();
-            var pt2 = new PIXI.Graphics();
-            pt2.beginFill(0x0000FF); 
-            pt2.drawCircle(fin[0],fin[1], 3); // drawCircle(x, y, radius)
-            pt2.endFill();
-            ndptgfx.push(pt1);
-            ndptgfx.push(pt2);
-            stage.addChild(pt1);
-            stage.addChild(pt2);
+            graphic.lineTo(fin[0], fin[1]);
+            stage.addChild(graphic);
+        }else{            
+            var pts = lineHalf([[init[0],init[1]],[fin[0], fin[1]]]);
+            for(var i = 1; i < pts.length; i+= 2){
+                var graphic = new Graphics();
+                graphic.lineStyle(1, 0x0000FF, 1);
+                graphic.moveTo(pts[i-1][0], pts[i-1][1]);
+                graphic.lineTo(pts[i][0], pts[i][1]);
+                stage.addChild(graphic);
+                nodes.push([pts[i-1],pts[i]]);
+                ndgfx.push(graphic);
+
+                var pt1 = new PIXI.Graphics();
+                pt1.beginFill(0x0000FF); 
+                pt1.drawCircle(pts[i-1][0], pts[i-1][1], 3); // drawCircle(x, y, radius)
+                pt1.endFill();
+                var pt2 = new PIXI.Graphics();
+                pt2.beginFill(0x0000FF); 
+                pt2.drawCircle(pts[i][0], pts[i][1], 3); // drawCircle(x, y, radius)
+                pt2.endFill();
+                ndptgfx.push(pt1);
+                ndptgfx.push(pt2);
+                stage.addChild(pt1);
+                stage.addChild(pt2);
+            }
         }
-        
-        graphic.lineTo(fin[0], fin[1]);
-        stage.addChild(graphic);
-    }
-    else{
-        graphic.destroy();
     }
     guide.destroy();
     guide = undefined;
     renderer.render(stage);
 }
+
+function lineHalf(arr){
+    if(math.distance([arr[0][0], arr[0][1]],[arr[1][0], arr[1][1]]) <= MAX_NODE_DIST){
+        return arr;
+    }else{
+        var xm = (arr[0][0] + arr[1][0])/2;
+        var ym = (arr[0][1] + arr[1][1])/2;
+        var h1 = lineHalf([[arr[0][0], arr[0][1]],[xm, ym]]);
+        var h2 = lineHalf([[xm,ym],[arr[1][0], arr[1][1]]]);
+        return h1.concat(h2);
+    }
+}
+
 function updateGuide(e){
     if(guide != undefined){
         guide.destroy();
@@ -219,4 +231,13 @@ function undo(){
         ndptgfx.pop().destroy();
         renderer.render(stage);
     }
+}
+
+function dump(){
+    var stobj = {
+        points: points,
+        edges: nodes
+    };
+
+    console.log(JSON.stringify(stobj));
 }
