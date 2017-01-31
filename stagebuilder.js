@@ -53,6 +53,7 @@ function destroyGrid(){
     for(var i = 0; i < gridLines.length; i++){
         gridLines[i].destroy();
     }
+    gridLines = [];
 }
 
 stage
@@ -72,6 +73,7 @@ buildGrid();
 var nm = false;
 var init;
 var guide;
+var pthilite;
 
 var ptgfx = [];
 var points = [];
@@ -79,6 +81,7 @@ var points = [];
 var ndgfx = [];
 var ndptgfx = [];
 var nodes = [];
+var MAX_NODE_DIST = 30;
 function onButtonDown(e){
     
     init = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
@@ -115,6 +118,7 @@ function onButtonUp(e){
             points.push([[init[0],init[1]],[fin[0], fin[1]]]);
             ptgfx.push(graphic);
         }else{
+            var edinc = math.distance([init[0],init[1]],[fin[0], fin[1]]);
             nodes.push([[init[0],init[1]],[fin[0], fin[1]]]);
             ndgfx.push(graphic);
             var pt1 = new PIXI.Graphics();
@@ -151,13 +155,22 @@ function updateGuide(e){
         }else{
             guide.lineStyle(1, 0x00FF00, 1);
         }
-        // draw a triangle using lines
+        
         guide.moveTo(init[0],init[1]);
         guide.lineTo(gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc)));
-        // add it the stage so we see it on our screens..
+        
         stage.addChild(guide);
-        renderer.render(stage);
     }
+    if(pthilite != undefined){
+        stage.removeChild(pthilite);
+        pthilite.destroy();
+    }
+    pthilite = new PIXI.Graphics();
+    pthilite.beginFill(0xFF00FF); 
+    pthilite.drawCircle(gridInc*Math.round(e.data.originalEvent.x/gridInc),gridInc*Math.round(e.data.originalEvent.y/gridInc), 3); 
+    pthilite.endFill();
+    stage.addChild(pthilite);
+    renderer.render(stage);
 }
 
 function keys(ev){
@@ -165,9 +178,32 @@ function keys(ev){
     if (evtobj.keyCode == 90 && evtobj.ctrlKey){
         undo();
     }else if(evtobj.keyCode == 78){
-        console.log("Node Mode");
         nm = !nm;
-        console.log(nm);
+        destroyGrid();
+        if(nm){
+            gridInc = 10;
+        }else{
+            gridInc = 20;
+        }
+        buildGrid();
+        for(var i = 0; i < ptgfx.length; i++){
+            stage.removeChild(ptgfx[i]);    
+            stage.addChild(ptgfx[i]);
+        }
+        for(var i = 0; i < ndgfx.length; i++){
+            stage.removeChild(ndgfx[i]);    
+            stage.addChild(ndgfx[i]);
+        }
+        for(var i = 0; i < ndptgfx.length; i++){
+            stage.removeChild(ndptgfx[i]);    
+            stage.addChild(ndptgfx[i]);
+        }
+        renderer.render(stage);
+    }else if(evtobj.keyCode == 189){
+        gridDec();
+    }
+    else if(evtobj.keyCode == 187){
+        gridAug();
     }
 }
 
