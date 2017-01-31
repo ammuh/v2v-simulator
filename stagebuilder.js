@@ -83,8 +83,7 @@ var ndptgfx = [];
 var nodes = [];
 var MAX_NODE_DIST = 30;
 function onButtonDown(e){
-    
-    init = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
+    init = closestPoint(e);
     guide = new Graphics();
  
     if(!nm){
@@ -103,7 +102,7 @@ function onButtonDown(e){
 
 function onButtonUp(e){
     
-    fin = [gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc))];
+    fin = closestPoint(e);
     
     if(fin[0] != init[0] || fin[1] != init[1]){
         if(!nm){
@@ -158,6 +157,7 @@ function lineHalf(arr){
 }
 
 function updateGuide(e){
+    var cp = closestPoint(e);
     if(guide != undefined){
         guide.destroy();
         guide = new Graphics();
@@ -169,7 +169,7 @@ function updateGuide(e){
         }
         
         guide.moveTo(init[0],init[1]);
-        guide.lineTo(gridInc*(Math.round(e.data.originalEvent.x/gridInc)), gridInc*(Math.round(e.data.originalEvent.y/gridInc)));
+        guide.lineTo(cp[0], cp[1]);
         
         stage.addChild(guide);
     }
@@ -179,10 +179,34 @@ function updateGuide(e){
     }
     pthilite = new PIXI.Graphics();
     pthilite.beginFill(0xFF00FF); 
-    pthilite.drawCircle(gridInc*Math.round(e.data.originalEvent.x/gridInc),gridInc*Math.round(e.data.originalEvent.y/gridInc), 3); 
+    pthilite.drawCircle(cp[0], cp[1], 3); 
     pthilite.endFill();
     stage.addChild(pthilite);
     renderer.render(stage);
+}
+
+function closestPoint(e){
+    if(!nm){
+        return [gridInc*Math.round(e.data.originalEvent.x/gridInc),gridInc*Math.round(e.data.originalEvent.y/gridInc)];
+    }else{
+        var sx = -100;
+        var sy = -100;
+        for(var i = 0; i < nodes.length; i++){
+            if(math.distance([e.data.originalEvent.x, e.data.originalEvent.y], nodes[i][0]) <= 12 && math.distance([e.data.originalEvent.x, e.data.originalEvent.y], nodes[i][0]) < math.distance([e.data.originalEvent.x, e.data.originalEvent.y], [sx, sy])){
+                sx = nodes[i][0][0];
+                sy = nodes[i][0][1];
+            }
+            if(math.distance([e.data.originalEvent.x, e.data.originalEvent.y], nodes[i][1]) <= 12 && math.distance([e.data.originalEvent.x, e.data.originalEvent.y], nodes[i][1]) < math.distance([e.data.originalEvent.x, e.data.originalEvent.y], [sx, sy])){
+                sx = nodes[i][0][0];
+                sy = nodes[i][0][1];
+            }
+        }
+        if(sx == -100 && sy == -100){
+            sx = gridInc*Math.round(e.data.originalEvent.x/gridInc);
+            sy = gridInc*Math.round(e.data.originalEvent.y/gridInc);
+        }
+        return [sx, sy];
+    }
 }
 
 function keys(ev){
