@@ -14,13 +14,11 @@ document.body.appendChild(renderer.view);
 var uiList = $("body").append("<ul></u>");
 //These are all the lines that will be drawn on the stage, the format of the arrays are [x1, y1, x2, y2]
 
-for(var i = 0; i < stageData.length; i++){
-	stageData[i] = stageData[i][0].concat(stageData[i][1]);
-}
-var lpoints = stageData;
+
+var lpoints;
 
 // These are the graph nodes
-var gNodes = graphEdges;
+var gNodes;
 
 //This is a global array that stores all the lines
 var lines = [];
@@ -33,7 +31,7 @@ var pg;
 var particle;
 
 loader
-	.load(init);
+	.load(loadStage);
 
 //Adds all the lines, and the collision label
 function stageSet() {
@@ -66,7 +64,22 @@ function stageSet() {
 	}
 }
 
+function loadStage(){
+	$.getJSON( "stages/stg1.json", function(data) {
+		stageData = data.points;
+		graphEdges = data.edges;
+		console.log(data);
+		init();
+	});
+}
+
 function init(){
+	for(var i = 0; i < stageData.length; i++){
+		stageData[i] = stageData[i][0].concat(stageData[i][1]);
+	}
+
+	lpoints = stageData;
+	gNodes = graphEdges;
 	stageSet();
 	particle = [];
 	particle.push(Particle(20, 20, [700,700]));

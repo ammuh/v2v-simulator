@@ -5,9 +5,10 @@ var Container = PIXI.Container,
     resources = PIXI.loader.resources,
     Sprite = PIXI.Sprite,
     Graphics = PIXI.Graphics;
-
+var width = 720;
+var height = 720;
 //Creates window in browser 720 by 720
-var renderer = autoDetectRenderer(720, 720, 
+var renderer = autoDetectRenderer(width, height, 
 	{resolution: 1});
 var stage = new Container();
 document.body.appendChild(renderer.view);
@@ -20,8 +21,7 @@ graphics.beginFill(0x000000);
 // set the line style to have a width of 5 and set the color to red
 graphics.lineStyle(0, 0xFF0000);
 
-var width = 720;
-var height = 720;
+
 // draw a rectangle
 graphics.drawRect(0, 0, width, height);
 
@@ -197,8 +197,8 @@ function closestPoint(e){
                 sy = nodes[i][0][1];
             }
             if(math.distance([e.data.originalEvent.x, e.data.originalEvent.y], nodes[i][1]) <= 12 && math.distance([e.data.originalEvent.x, e.data.originalEvent.y], nodes[i][1]) < math.distance([e.data.originalEvent.x, e.data.originalEvent.y], [sx, sy])){
-                sx = nodes[i][0][0];
-                sy = nodes[i][0][1];
+                sx = nodes[i][1][0];
+                sy = nodes[i][1][1];
             }
         }
         if(sx == -100 && sy == -100){
@@ -240,6 +240,8 @@ function keys(ev){
     }
     else if(evtobj.keyCode == 187){
         gridAug();
+    }else if(evtobj.keyCode == 68){
+        dump();
     }
 }
 
@@ -258,8 +260,9 @@ function undo(){
 }
 
 function dump(){
+    var wedges = [[[0,0],[0, height]], [[0,height],[width, height]], [[width,height],[width, 0]], [[width,0],[0,0]]];
     var stobj = {
-        points: points,
+        points: points.concat(wedges),
         edges: nodes
     };
 
