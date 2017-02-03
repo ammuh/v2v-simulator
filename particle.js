@@ -39,9 +39,10 @@ class Particle extends PIXI.Sprite{
 		this.prevNodeDist = 1/0;
 		
 		this.driver = new Worker("driver.js");
+		this.driver.particle = this;
 		this.driver.onmessage = function(pstate) {
-			this.speedSet(pstate.data.speed);
-			this.turnFib(pstate.data.fiber);
+			this.particle.speedSet(pstate.data.speed);
+			this.particle.turnFib(pstate.data.fiber);
 		};
 	}
 
@@ -212,22 +213,22 @@ class Particle extends PIXI.Sprite{
 		}
 	}
 
-	boverlap(a1, a2, a3, a4){
-		if((a3 <= Math.max(a1,a2) && a3 >= Math.min(a1,a2)) || (a4 <= Math.max(a1,a2) && a4 >= Math.min(a1,a2)) || (a1 <= Math.max(a3,a4) && a1 >= Math.min(a3,a4))|| (a2 <= Math.max(a3,a4) && a2 >= Math.min(a3,a4))){
-			return true;
-		}
-		return false;
-	}
-
-	bengulf(sup1, sup2, b1, b2){
-		if(Math.max(sup1, sup2) >= Math.max(b1, b2) && Math.min(sup1, sup2) <= Math.min(b1, b2)){
-			return true;
-		}
-		return false;
-	}
+	
 }
 
+function boverlap(a1, a2, a3, a4){
+	if((a3 <= Math.max(a1,a2) && a3 >= Math.min(a1,a2)) || (a4 <= Math.max(a1,a2) && a4 >= Math.min(a1,a2)) || (a1 <= Math.max(a3,a4) && a1 >= Math.min(a3,a4))|| (a2 <= Math.max(a3,a4) && a2 >= Math.min(a3,a4))){
+		return true;
+	}
+	return false;
+}
 
+function bengulf(sup1, sup2, b1, b2){
+	if(Math.max(sup1, sup2) >= Math.max(b1, b2) && Math.min(sup1, sup2) <= Math.min(b1, b2)){
+		return true;
+	}
+	return false;
+}
 
 
 
