@@ -82,12 +82,12 @@ function init(){
 	gNodes = graphEdges;
 	stageSet();
 	particle = [];
-	particle.push(Particle(20, 20, [700,700]));
-	particle.push(Particle(20, 700, [450, 360]));
-	particle.push(Particle(700, 20, [30, 660]));
-	particle.push(Particle(360, 360, [450, 360]));
-	particle.push(Particle(450, 690, [700,700]));
-	particle.push(Particle(690, 360, [450, 360]));
+	particle.push(new Particle(20, 20, [700,700]));
+	particle.push(new Particle(20, 700, [450, 360]));
+	particle.push(new Particle(700, 20, [30, 660]));
+	particle.push(new Particle(360, 360, [450, 360]));
+	particle.push(new Particle(450, 690, [700,700]));
+	particle.push(new Particle(690, 360, [450, 360]));
 	$( "ul" ).append( "<li></li>" );
 	$( "ul" ).append( "<li></li>" );
 	$( "ul" ).append( "<li></li>" );
