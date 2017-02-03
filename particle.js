@@ -3,7 +3,9 @@ PIXI.loader
 
 var SPEEDLIMIT = 4;
 var smemory = 2;
-
+var nfibers = 32;
+var fibzone = 30;
+var fang = 2*Math.PI/nfibers;
 class Particle extends PIXI.Sprite{
 	constructor(x, y, dest) {
 		super(resources["img/p.png"].texture);
@@ -23,6 +25,18 @@ class Particle extends PIXI.Sprite{
 		this.speed = 0;
 		this.rotation = 0;
 		this.fiber = 0;
+		this.fibs = [];
+		this.fibstats = [];
+		this.fiberang = fang;
+		for(var i = 0; i < nfibers; i++){
+			fibs.push([this.x + ((this.width/2)+fibzone)*Math.cos(i*this.fiberang), this.y - ((this.width/2)+fibzone)*Math.sin(i*this.fiberang)]);
+			fibstats.push({
+				clear: true,
+				distance: -1,
+				fib: -1,
+				speed: -1
+			});
+		}
 		//Particle States
 		this.accel = 0;
 		this.steer = 0;

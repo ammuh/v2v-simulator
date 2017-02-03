@@ -1,10 +1,35 @@
 var stages = [];
 
-class Stage {
-	constructor() {
+class Game extends PIXI.Container{
+	constructor(stgdata, gedges) {
+		super();
 		this.boundaries = [];
+		this.lines
+		this.gnodes = [];
 		this.particles = [];
 		this.graph = new PathGraph();
+
+		for(var i = 0; i < stgdata.length; i++){
+			stgdata[i] = stgdata[i][0].concat(stgdata[i][1]);
+		}
+		var i;
+		for(i = 0; i < stgdata.length; i++){
+			var ln = new PIXI.Graphics();
+			ln.lineStyle(4, 0xFFFFFF, 1);
+			ln.moveTo(stgdata[i][0], stgdata[i][1]);
+			ln.lineTo(stgdata[i][2], stgdata[i][3]);
+			this.lines.push(ln);
+			stage.addChild(ln);
+		}
+
+		for(i = 0; i < gnodes.length; i++){
+			var ln = new PIXI.Graphics();
+			ln.lineStyle(1, 0x2ecc71, 1);
+			ln.moveTo(gnodes[i][0][0], gnodes[i][0][1]);
+			ln.lineTo(gnodes[i][1][0], gnodes[i][1][1]);
+			this.graph.addEdge(gnodes[i][0], gnodes[i][1], false);
+			stage.addChild(ln);
+		}
 	}
 
 	addLine(x1, y1, x2, y2) {
@@ -44,6 +69,9 @@ class Stage {
 
 	getParticles() {
 		return this.particles;
+	}
+
+	render(){
 	}
 }
 

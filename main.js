@@ -33,37 +33,6 @@ var particle;
 loader
 	.load(loadStage);
 
-//Adds all the lines, and the collision label
-function stageSet() {
-	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
-	stage.addChild(msg);
-	label = stage.children[0];
-	label.y = 725;
-
-	var i;
-	for(i = 0; i < lpoints.length; i++){
-		var ln = new Graphics();
-		ln.lineStyle(4, 0xFFFFFF, 1);
-		ln.moveTo(lpoints[i][0], lpoints[i][1]);
-		ln.lineTo(lpoints[i][2], lpoints[i][3]);
-		lines.push(ln);
-	}
-
-	pg = new PathGraph();
-	for(i = 0; i < gNodes.length; i++){
-		var ln = new Graphics();
-		ln.lineStyle(1, 0x2ecc71, 1);
-		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
-		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
-		pg.addEdge(gNodes[i][0], gNodes[i][1], false);
-		stage.addChild(ln);
-	}
-
-	for(i = 0; i < lines.length; i++){
-		stage.addChild(lines[i]);
-	}
-}
-
 function loadStage(){
 	$.getJSON( "stages/stg1.json", function(data) {
 		stageData = data.points;
@@ -100,6 +69,39 @@ function init(){
 	}
 	renderLoop();
 }
+
+//Adds all the lines, and the collision label
+function stageSet() {
+	var msg = new PIXI.Text('Smooth Sailing',{fontFamily : 'Arial', fontSize: 14, fill : 0xFFFFFF, align : 'center'});
+	stage.addChild(msg);
+	label = stage.children[0];
+	label.y = 725;
+
+	var i;
+	for(i = 0; i < lpoints.length; i++){
+		var ln = new Graphics();
+		ln.lineStyle(4, 0xFFFFFF, 1);
+		ln.moveTo(lpoints[i][0], lpoints[i][1]);
+		ln.lineTo(lpoints[i][2], lpoints[i][3]);
+		lines.push(ln);
+	}
+
+	pg = new PathGraph();
+	for(i = 0; i < gNodes.length; i++){
+		var ln = new Graphics();
+		ln.lineStyle(1, 0x2ecc71, 1);
+		ln.moveTo(gNodes[i][0][0], gNodes[i][0][1]);
+		ln.lineTo(gNodes[i][1][0], gNodes[i][1][1]);
+		pg.addEdge(gNodes[i][0], gNodes[i][1], false);
+		stage.addChild(ln);
+	}
+
+	for(i = 0; i < lines.length; i++){
+		stage.addChild(lines[i]);
+	}
+}
+
+
 
 //Message Board
 var fps = 0;
