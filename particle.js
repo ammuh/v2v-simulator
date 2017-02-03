@@ -37,21 +37,8 @@ class Particle extends PIXI.Sprite{
 		}
 		this.boundcollision = false;
 		this.prevNodeDist = 1/0;
-		this.collisionCheck = collisionCheck;
-		this.pintX = pintX;
-		this.pintY = pintY;
-		this.pintF = pintF;
-		this.state = state;
-		this.animate = animate;
-		this.driverState = driverState;
+		
 		this.driver = new Worker("driver.js");
-		this.turn = turn;
-		this.accelerate = accelerate;
-		this.stop = stop;
-		this.backtrack = backtrack;
-		this.turnFib = turnFib;
-		this.speedSet = speedSet;
-		this.resultState = resultState;
 		this.driver.onmessage = function(pstate) {
 			this.speedSet(pstate.data.speed);
 			this.turnFib(pstate.data.fiber);
