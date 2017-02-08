@@ -29,8 +29,8 @@ class Particle extends PIXI.Sprite{
 		this.fibstats = [];
 		this.fiberang = fang;
 		for(var i = 0; i < nfibers; i++){
-			fibs.push([this.x + ((this.width/2)+fibzone)*Math.cos(i*this.fiberang), this.y - ((this.width/2)+fibzone)*Math.sin(i*this.fiberang)]);
-			fibstats.push({
+			this.fibs.push([this.x + ((this.width/2)+fibzone)*Math.cos(i*this.fiberang), this.y - ((this.width/2)+fibzone)*Math.sin(i*this.fiberang)]);
+			this.fibstats.push({
 				clear: true,
 				distance: -1,
 				fib: -1,

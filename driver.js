@@ -29,7 +29,7 @@ var slines;
 */
 
 var window = {};
-
+importScripts("./node_modules/pixi.js/dist/pixi.min.js");
 importScripts("./stage.js");
 importScripts("./reinforcement/convnet.js");
 importScripts("./reinforcement/util.js");
